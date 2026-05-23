@@ -35,6 +35,8 @@ Server akan run di `http://localhost:8080`
 
 ## API Documentation
 
+Untuk panduan pagination yang lebih fokus, lihat [PAGINATION.md](PAGINATION.md).
+
 ### Base URL
 ```text
 http://localhost:8080/api/v1
