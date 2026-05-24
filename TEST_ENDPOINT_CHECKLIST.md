@@ -13,9 +13,9 @@ Gunakan file ini untuk mengecek endpoint satu per satu. Centang setelah endpoint
 ## 1. Auth
 
 - [ ] `POST /api/v1/auth/register`
-- [ ] `POST /api/v1/auth/login`
-- [ ] `GET /api/v1/auth/me`
-- [ ] `POST /api/v1/auth/logout`
+- [V] `POST /api/v1/auth/login`
+- [V] `GET /api/v1/auth/me`
+- [V] `POST /api/v1/auth/logout`
 
 Catatan test:
 - Pastikan login berhasil dan token diterima.
@@ -23,42 +23,42 @@ Catatan test:
 
 ## 2. User Management
 
-- [ ] `GET /api/v1/users?page=1&per_page=10`
-- [ ] `GET /api/v1/users/:id`
-- [ ] `PUT /api/v1/users/:id`
-- [ ] `PATCH /api/v1/users/:id/role`
+- [V] `GET /api/v1/users?page=1&per_page=10`
+- [V] `GET /api/v1/users/:id`
+- [V] `PUT /api/v1/users/:id`
+- [V] `PATCH /api/v1/users/:id/role`
 - [ ] `DELETE /api/v1/users/:id`
 
 Checklist validasi:
-- [ ] `GET /users` hanya bisa diakses `admin` atau `ketua`
-- [ ] `PUT /users/:id` hanya bisa diakses `admin` atau `ketua`
-- [ ] `PATCH /users/:id/role` hanya bisa diakses `admin`
+- [V] `GET /users` hanya bisa diakses `admin` atau `ketua`
+- [V] `PUT /users/:id` hanya bisa diakses `admin` atau `ketua`
+- [V] `PATCH /users/:id/role` hanya bisa diakses `admin`
 - [ ] `DELETE /users/:id` hanya bisa diakses `admin`
 
 ## 3. Event Management
 
-- [ ] `POST /api/v1/events`
-- [ ] `GET /api/v1/events?page=1&per_page=10`
-- [ ] `GET /api/v1/events/:id`
-- [ ] `PUT /api/v1/events/:id`
-- [ ] `DELETE /api/v1/events/:id`
+- [V] `POST /api/v1/events`
+- [V] `GET /api/v1/events?page=1&per_page=10`
+- [V] `GET /api/v1/events/:id`
+- [V] `PUT /api/v1/events/:id`
+- [V] `DELETE /api/v1/events/:id`
 
 Checklist validasi:
-- [ ] Query filter event diuji: `q`, `status`, `ketua_id`, `tanggal_mulai_from`, `tanggal_mulai_to`
-- [ ] Sorting event diuji: `sort_by`, `order`
+- [V] Query filter event diuji: `q`, `status`, `ketua_id`, `tanggal_mulai_from`, `tanggal_mulai_to`
+- [V] Sorting event diuji: `sort_by`, `order`
 
 ## 4. Vendor Management
 
-- [ ] `POST /api/v1/events/:id/vendors`
-- [ ] `GET /api/v1/events/:id/vendors?page=1&per_page=10`
-- [ ] `GET /api/v1/vendors/:id`
-- [ ] `PUT /api/v1/vendors/:id`
-- [ ] `DELETE /api/v1/vendors/:id`
+- [V] `POST /api/v1/events/:id/vendors`
+- [V] `GET /api/v1/events/:id/vendors?page=1&per_page=10`
+- [V] `GET /api/v1/vendors/:id`
+- [V] `PUT /api/v1/vendors/:id`
+- [V] `DELETE /api/v1/vendors/:id`
 
 Checklist validasi:
 - [ ] Filter vendor diuji: `q`, `status`, `kategori`
-- [ ] Sorting vendor diuji: `sort_by`, `order`
-- [ ] Update/delete vendor hanya bisa `admin` atau `ketua`
+- [V] Sorting vendor diuji: `sort_by`, `order`
+- [V] Update/delete vendor hanya bisa `admin` atau `ketua`
 
 ## 5. Rundown Management
 

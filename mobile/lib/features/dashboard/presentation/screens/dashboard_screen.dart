@@ -156,6 +156,41 @@ class DashboardScreen extends ConsumerWidget {
 
               const SliverGap(28),
 
+              // Admin Management Section
+              if (user?.role == 'admin' || user?.role == 'ketua')
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const _SectionHeader(title: 'Manajemen Khusus'),
+                        const Gap(12),
+                        Wrap(
+                          spacing: 12,
+                          runSpacing: 12,
+                          children: [
+                            if (user?.role == 'admin' || user?.role == 'ketua')
+                              _ActionChip(
+                                icon: Icons.manage_accounts_outlined,
+                                label: user?.role == 'admin' ? 'Kelola User' : 'Kelola Staff & Divisi',
+                                color: AppColors.info,
+                                onTap: () => context.push('/admin/users'),
+                              ),
+                            _ActionChip(
+                              icon: Icons.add_chart_rounded,
+                              label: 'Buat Event Baru',
+                              color: AppColors.primary,
+                              onTap: () => context.push('/admin/events/new'),
+                            ),
+                          ],
+                        ),
+                        const Gap(28),
+                      ],
+                    ),
+                  ),
+                ),
+
               // Urgent Tasks
               SliverToBoxAdapter(
                 child: Padding(
@@ -448,6 +483,50 @@ class _CompactEventCard extends StatelessWidget {
               ),
             ),
             const Icon(Icons.chevron_right_rounded, color: AppColors.textSecondary),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ActionChip extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _ActionChip({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: color.withAlpha(25),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: color.withAlpha(50)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: color, size: 20),
+            const Gap(8),
+            Text(
+              label,
+              style: TextStyle(
+                color: color,
+                fontWeight: FontWeight.w600,
+                fontSize: 13,
+              ),
+            ),
           ],
         ),
       ),

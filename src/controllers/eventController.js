@@ -3,6 +3,24 @@ const { Op } = require('sequelize');
 const { successResponse, errorResponse } = require('../utils/response');
 const { getPaginationParams, buildPaginationMeta, getSortParams } = require('../utils/pagination');
 
+function buildEventVisibilityInclude(currentUserRole, currentUserId) {
+  if (currentUserRole === 'admin' || currentUserRole === 'ketua') {
+    return [];
+  }
+
+  if (!currentUserId) {
+    return [];
+  }
+
+  return [{
+    model: db.Tugas,
+    as: 'tugas',
+    attributes: [],
+    required: true,
+    where: { assignee_id: currentUserId },
+  }];
+}
+
 function buildEventPayload(event) {
   return {
     id: event.id,
@@ -72,6 +90,9 @@ async function listEvents(req, res, next) {
       defaultOrder: 'DESC',
     });
     const where = {};
+    const currentUserRole = req.auth?.role;
+    const currentUserId = req.auth?.id;
+    const visibilityInclude = buildEventVisibilityInclude(currentUserRole, currentUserId);
 
     if (req.query.status) {
       where.status = req.query.status;
@@ -102,6 +123,7 @@ async function listEvents(req, res, next) {
       where,
       order: [[sortBy, order]],
       include: [{ model: db.User, as: 'ketua', attributes: ['id', 'name', 'email', 'role'] }],
+      ...(visibilityInclude.length ? { include: [...visibilityInclude, { model: db.User, as: 'ketua', attributes: ['id', 'name', 'email', 'role'] }] } : {}),
       offset,
       limit,
       distinct: true,
@@ -121,8 +143,16 @@ async function listEvents(req, res, next) {
 async function getEventById(req, res, next) {
   try {
     const eventId = req.params.id;
-    const event = await db.Event.findByPk(eventId, {
-      include: [{ model: db.User, as: 'ketua', attributes: ['id', 'name', 'email', 'role'] }],
+    const currentUserRole = req.auth?.role;
+    const currentUserId = req.auth?.id;
+    const visibilityInclude = buildEventVisibilityInclude(currentUserRole, currentUserId);
+    const event = await db.Event.findOne({
+      where: { id: eventId },
+      include: [
+        { model: db.User, as: 'ketua', attributes: ['id', 'name', 'email', 'role'] },
+        ...visibilityInclude,
+      ],
+      distinct: true,
     });
 
     if (!event) {

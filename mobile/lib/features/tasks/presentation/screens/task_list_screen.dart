@@ -9,6 +9,7 @@ import 'package:eventsync_mobile/shared/widgets/paginated_list.dart';
 import 'package:eventsync_mobile/shared/widgets/status_badge.dart';
 import 'package:eventsync_mobile/features/tasks/domain/entities/task.dart';
 import 'package:eventsync_mobile/features/tasks/presentation/providers/task_provider.dart';
+import 'package:eventsync_mobile/features/auth/presentation/providers/auth_provider.dart';
 
 class TaskListScreen extends ConsumerStatefulWidget {
   /// If provided, lists tasks for a specific event. Otherwise, lists 'My Tasks'.
@@ -72,6 +73,22 @@ class _TaskListScreenState extends ConsumerState<TaskListScreen> {
         ),
         itemBuilder: (context, task) => _TaskCard(task: task),
       ),
+      floatingActionButton: widget.eventId != null
+          ? Consumer(
+              builder: (context, ref, child) {
+                final user = ref.watch(currentUserProvider);
+                if (user?.role == 'admin' || user?.role == 'ketua') {
+                  return FloatingActionButton.extended(
+                    onPressed: () => context.push('/events/${widget.eventId}/tasks/new'),
+                    backgroundColor: AppColors.primary,
+                    icon: const Icon(Icons.add_task, color: Colors.white),
+                    label: const Text('Buat Tugas', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            )
+          : null,
     );
   }
 }

@@ -38,4 +38,28 @@ class RundownRepositoryImpl implements RundownRepository {
       throw handleDioError(e);
     }
   }
+
+  @override
+  Future<Rundown> createRundown({
+    required int eventId,
+    required String kegiatan,
+    required DateTime waktuMulai,
+    required DateTime waktuSelesai,
+    String? pic,
+  }) async {
+    try {
+      final response = await _dio.post(
+        ApiEndpoints.eventRundowns(eventId),
+        data: {
+          'kegiatan': kegiatan,
+          'waktu_mulai': waktuMulai.toIso8601String(),
+          'waktu_selesai': waktuSelesai.toIso8601String(),
+          if (pic != null && pic.isNotEmpty) 'pic': pic,
+        },
+      );
+      return Rundown.fromJson(response.data['data']['rundown'] as Map<String, dynamic>);
+    } on DioException catch (e) {
+      throw handleDioError(e);
+    }
+  }
 }

@@ -2,6 +2,7 @@ const db = require('../models/sql');
 const { Op } = require('sequelize');
 const { successResponse, errorResponse } = require('../utils/response');
 const { getPaginationParams, buildPaginationMeta, getSortParams } = require('../utils/pagination');
+const { findVisibleEventById } = require('../utils/eventAccess');
 
 function buildRundownPayload(rundown) {
   return {
@@ -31,7 +32,7 @@ async function createRundown(req, res, next) {
       return errorResponse(res, { message: 'Urutan, waktu mulai, dan judul sesi wajib diisi', statusCode: 400 });
     }
 
-    const event = await db.Event.findByPk(eventId);
+    const event = await findVisibleEventById(eventId, req);
     if (!event) {
       return errorResponse(res, { message: 'Event tidak ditemukan', statusCode: 404 });
     }
@@ -68,6 +69,12 @@ async function createRundown(req, res, next) {
 async function listRundownsByEvent(req, res, next) {
   try {
     const eventId = req.params.id;
+    const event = await findVisibleEventById(eventId, req);
+
+    if (!event) {
+      return errorResponse(res, { message: 'Event tidak ditemukan', statusCode: 404 });
+    }
+
     const { page, perPage, offset, limit } = getPaginationParams(req.query);
     const { sortBy, order } = getSortParams(req.query, {
       allowedSortBy: ['urutan', 'created_at', 'waktu_mulai', 'judul_sesi'],

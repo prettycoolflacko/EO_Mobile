@@ -68,11 +68,10 @@ class ProfileScreen extends ConsumerWidget {
 
                 // Info tiles
                 _InfoTile(icon: Icons.email_outlined, label: 'Email', value: user.email),
-                if (user.divisi != null)
-                  _InfoTile(
-                      icon: Icons.groups_outlined,
-                      label: 'Divisi',
-                      value: user.divisi!),
+                _InfoTile(
+                    icon: Icons.groups_outlined,
+                    label: 'Divisi',
+                    value: user.divisi ?? 'Staff'),
                 if (user.phone != null)
                   _InfoTile(
                       icon: Icons.phone_outlined,

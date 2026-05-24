@@ -19,6 +19,19 @@ Kalau tidak dikirim, default-nya:
 
 Batas maksimal `per_page` adalah `100`.
 
+## Endpoint Yang Mendukung Pagination
+
+Endpoint berikut bisa memakai parameter pagination:
+
+- `GET /api/v1/users`
+- `GET /api/v1/events`
+- `GET /api/v1/events/:id/vendors`
+- `GET /api/v1/events/:id/rundowns`
+- `GET /api/v1/events/:id/tugas`
+- `GET /api/v1/events/:id/laporan`
+
+Masing-masing endpoint juga bisa digabung dengan filter dan sorting sesuai resource-nya.
+
 ## Cara Kerja
 
 Backend menghitung:

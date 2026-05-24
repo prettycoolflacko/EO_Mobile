@@ -76,7 +76,15 @@ class AuthNotifier extends AsyncNotifier<User?> {
 
   Future<void> logout() async {
     final repo = ref.read(authRepositoryProvider);
-    await repo.logout();
+    try {
+      await repo.logout();
+    } catch (_) {}
+    state = const AsyncData(null);
+  }
+
+  Future<void> forceLogout() async {
+    final repo = ref.read(authRepositoryProvider);
+    await repo.clearSession();
     state = const AsyncData(null);
   }
 }

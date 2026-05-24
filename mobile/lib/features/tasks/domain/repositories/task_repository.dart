@@ -20,4 +20,13 @@ abstract class TaskRepository {
     required String status,
     String? catatan,
   });
+
+  Future<Task> createTask({
+    required int eventId,
+    required int assigneeId,
+    required String judul,
+    required DateTime tenggatWaktu,
+    required String prioritas,
+    String? deskripsi,
+  });
 }

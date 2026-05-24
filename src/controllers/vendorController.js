@@ -2,6 +2,7 @@ const db = require('../models/sql');
 const { Op } = require('sequelize');
 const { successResponse, errorResponse } = require('../utils/response');
 const { getPaginationParams, buildPaginationMeta, getSortParams } = require('../utils/pagination');
+const { findVisibleEventById } = require('../utils/eventAccess');
 
 function buildVendorPayload(vendor) {
   return {
@@ -60,6 +61,12 @@ async function createVendor(req, res, next) {
 async function listVendorsByEvent(req, res, next) {
   try {
     const eventId = req.params.id;
+    const event = await findVisibleEventById(eventId, req);
+
+    if (!event) {
+      return errorResponse(res, { message: 'Event tidak ditemukan', statusCode: 404 });
+    }
+
     const { page, perPage, offset, limit } = getPaginationParams(req.query);
     const { sortBy, order } = getSortParams(req.query, {
       allowedSortBy: ['created_at', 'nama_vendor', 'status'],
@@ -107,6 +114,12 @@ async function getVendorById(req, res, next) {
     const vendor = await db.Vendor.findByPk(vendorId);
 
     if (!vendor) {
+      return errorResponse(res, { message: 'Vendor tidak ditemukan', statusCode: 404 });
+    }
+
+    const event = await findVisibleEventById(vendor.event_id, req);
+
+    if (!event) {
       return errorResponse(res, { message: 'Vendor tidak ditemukan', statusCode: 404 });
     }
 

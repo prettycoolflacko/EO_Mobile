@@ -7,6 +7,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:eventsync_mobile/core/constants/app_config.dart';
 import 'package:eventsync_mobile/core/errors/app_exception.dart';
 import 'package:eventsync_mobile/core/network/auth_interceptor.dart';
+import 'package:eventsync_mobile/features/auth/presentation/providers/auth_provider.dart';
 
 /// Singleton Dio client provider.
 final dioProvider = Provider<Dio>((ref) {
@@ -30,7 +31,7 @@ final dioProvider = Provider<Dio>((ref) {
       storage: storage,
       onUnauthorized: () {
         // Trigger auth state change — the router guard will redirect
-        ref.read(authStateNotifierProvider.notifier).onUnauthorized();
+        ref.read(authStateProvider.notifier).forceLogout();
       },
     ),
     LogInterceptor(

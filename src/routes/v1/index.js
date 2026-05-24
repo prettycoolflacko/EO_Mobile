@@ -53,6 +53,6 @@ v1Routes.post('/events/:id/tugas', authMiddleware, roleMiddleware(['admin', 'ket
 v1Routes.get('/events/:id/tugas', authMiddleware, validate(eventIdParamSchema, 'params'), validate(tugasListQuerySchema, 'query'), tugasController.listTugasByEvent);
 
 v1Routes.post('/events/:id/laporan', authMiddleware, roleMiddleware(['admin', 'ketua']), validate(eventIdParamSchema, 'params'), validate(laporanCreateSchema), laporanController.createLaporan);
-v1Routes.get('/events/:id/laporan', authMiddleware, roleMiddleware(['admin', 'ketua']), validate(eventIdParamSchema, 'params'), validate(laporanListQuerySchema, 'query'), laporanController.listLaporanByEvent);
+v1Routes.get('/events/:id/laporan', authMiddleware, validate(eventIdParamSchema, 'params'), validate(laporanListQuerySchema, 'query'), laporanController.listLaporanByEvent);
 
 module.exports = v1Routes;

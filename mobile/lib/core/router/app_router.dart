@@ -11,12 +11,17 @@ import 'package:eventsync_mobile/features/events/presentation/screens/event_list
 import 'package:eventsync_mobile/features/events/presentation/screens/event_detail_screen.dart';
 import 'package:eventsync_mobile/features/tasks/presentation/screens/task_list_screen.dart';
 import 'package:eventsync_mobile/features/tasks/presentation/screens/task_detail_screen.dart';
+import 'package:eventsync_mobile/features/tasks/presentation/screens/task_form_screen.dart';
 import 'package:eventsync_mobile/features/rundown/presentation/screens/rundown_screen.dart';
+import 'package:eventsync_mobile/features/rundown/presentation/screens/rundown_form_screen.dart';
 import 'package:eventsync_mobile/features/chat/presentation/screens/chat_screen.dart';
 import 'package:eventsync_mobile/features/notifications/presentation/screens/notification_screen.dart';
 import 'package:eventsync_mobile/features/profile/presentation/screens/profile_screen.dart';
 import 'package:eventsync_mobile/features/vendors/presentation/screens/vendor_list_screen.dart';
 import 'package:eventsync_mobile/features/vendors/presentation/screens/vendor_detail_screen.dart';
+import 'package:eventsync_mobile/features/vendors/presentation/screens/vendor_form_screen.dart';
+import 'package:eventsync_mobile/features/admin/presentation/screens/user_management_screen.dart';
+import 'package:eventsync_mobile/features/events/presentation/screens/event_form_screen.dart';
 import 'package:eventsync_mobile/shared/widgets/app_scaffold.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -123,12 +128,30 @@ final routerProvider = Provider<GoRouter>((ref) {
         },
       ),
       GoRoute(
+        path: '/events/:id/tasks/new',
+        name: 'newTask',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          final id = int.parse(state.pathParameters['id']!);
+          return TaskFormScreen(eventId: id);
+        },
+      ),
+      GoRoute(
         path: '/rundown/:eventId',
         name: RouteNames.rundown,
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) {
           final eventId = int.parse(state.pathParameters['eventId']!);
           return RundownScreen(eventId: eventId);
+        },
+      ),
+      GoRoute(
+        path: '/rundown/:eventId/new',
+        name: 'newRundown',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          final eventId = int.parse(state.pathParameters['eventId']!);
+          return RundownFormScreen(eventId: eventId);
         },
       ),
       GoRoute(
@@ -150,6 +173,15 @@ final routerProvider = Provider<GoRouter>((ref) {
         },
       ),
       GoRoute(
+        path: '/vendors/:eventId/new',
+        name: 'newVendor',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          final eventId = int.parse(state.pathParameters['eventId']!);
+          return VendorFormScreen(eventId: eventId);
+        },
+      ),
+      GoRoute(
         path: '/chat/:eventId',
         name: RouteNames.chat,
         parentNavigatorKey: _rootNavigatorKey,
@@ -157,6 +189,18 @@ final routerProvider = Provider<GoRouter>((ref) {
           final eventId = int.parse(state.pathParameters['eventId']!);
           return ChatScreen(eventId: eventId);
         },
+      ),
+      GoRoute(
+        path: '/admin/users',
+        name: 'adminUsers',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const UserManagementScreen(),
+      ),
+      GoRoute(
+        path: '/admin/events/new',
+        name: 'adminEventNew',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const EventFormScreen(),
       ),
     ],
   );

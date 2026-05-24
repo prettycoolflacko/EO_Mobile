@@ -187,6 +187,35 @@ class TaskListNotifier extends StateNotifier<TaskListState> {
       rethrow;
     }
   }
+
+  Future<void> createTask({
+    required int eventId,
+    required int assigneeId,
+    required String judul,
+    required DateTime tenggatWaktu,
+    required String prioritas,
+    String? deskripsi,
+  }) async {
+    try {
+      final newTask = await _repository.createTask(
+        eventId: eventId,
+        assigneeId: assigneeId,
+        judul: judul,
+        tenggatWaktu: tenggatWaktu,
+        prioritas: prioritas,
+        deskripsi: deskripsi,
+      );
+
+      // Add the new task to the top of the list if it belongs to the current scope
+      if (_params.eventId == null || _params.eventId == eventId) {
+        state = state.copyWith(
+          tasks: [newTask, ...state.tasks],
+        );
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
 
 /// Provider for a single task detail.

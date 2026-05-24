@@ -17,6 +17,7 @@ class EventRepositoryImpl implements EventRepository {
     int perPage = 10,
     String? search,
     String? status,
+    int? ketuaId,
   }) async {
     try {
       final response = await _dio.get(
@@ -26,6 +27,7 @@ class EventRepositoryImpl implements EventRepository {
           'per_page': perPage,
           if (search != null && search.isNotEmpty) 'q': search,
           if (status != null && status.isNotEmpty) 'status': status,
+          if (ketuaId != null) 'ketua_id': ketuaId,
         },
       );
 
@@ -45,6 +47,39 @@ class EventRepositoryImpl implements EventRepository {
     try {
       final response = await _dio.get(ApiEndpoints.event(id));
       return Event.fromJson(response.data['data']['event'] as Map<String, dynamic>);
+    } on DioException catch (e) {
+      throw handleDioError(e);
+    }
+  }
+  @override
+  Future<Event> createEvent({
+    required String namaEvent,
+    required DateTime tanggalMulai,
+    required DateTime tanggalSelesai,
+    String? deskripsi,
+    String? lokasi,
+  }) async {
+    try {
+      final response = await _dio.post(
+        ApiEndpoints.events,
+        data: {
+          'nama_event': namaEvent,
+          'tanggal_mulai': tanggalMulai.toIso8601String(),
+          'tanggal_selesai': tanggalSelesai.toIso8601String(),
+          if (deskripsi != null && deskripsi.isNotEmpty) 'deskripsi': deskripsi,
+          if (lokasi != null && lokasi.isNotEmpty) 'lokasi': lokasi,
+        },
+      );
+      return Event.fromJson(response.data['data']['event'] as Map<String, dynamic>);
+    } on DioException catch (e) {
+      throw handleDioError(e);
+    }
+  }
+
+  @override
+  Future<void> deleteEvent(int id) async {
+    try {
+      await _dio.delete(ApiEndpoints.event(id));
     } on DioException catch (e) {
       throw handleDioError(e);
     }

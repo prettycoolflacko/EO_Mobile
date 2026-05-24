@@ -8,6 +8,7 @@ import 'package:eventsync_mobile/core/theme/app_colors.dart';
 import 'package:eventsync_mobile/shared/widgets/status_badge.dart';
 import 'package:eventsync_mobile/features/events/domain/entities/event.dart';
 import 'package:eventsync_mobile/features/events/presentation/providers/event_provider.dart';
+import 'package:eventsync_mobile/features/auth/presentation/providers/auth_provider.dart';
 
 class EventDetailScreen extends ConsumerWidget {
   final int eventId;
@@ -62,22 +63,70 @@ class _EventDetailContent extends StatelessWidget {
               pinned: true,
               backgroundColor: AppColors.surface,
               actions: [
+                Consumer(
+                  builder: (context, ref, child) {
+                    final user = ref.watch(currentUserProvider);
+                    final isAdmin = user?.role == 'admin';
+                    final isKetuaOfThisEvent = user?.role == 'ketua' && event.ketuaId == user?.id;
+                    final canDelete = isAdmin || isKetuaOfThisEvent;
+
+                    if (canDelete) {
+                      return IconButton(
+                        onPressed: () async {
+                          final confirm = await showDialog<bool>(
+                            context: context,
+                            builder: (ctx) => AlertDialog(
+                              backgroundColor: AppColors.cardDark,
+                              title: const Text('Hapus Event'),
+                              content: Text('Hapus event ${event.namaEvent}?'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(ctx, false),
+                                  child: const Text('Batal', style: TextStyle(color: AppColors.textSecondary)),
+                                ),
+                                TextButton(
+                                  onPressed: () => Navigator.pop(ctx, true),
+                                  child: const Text('Hapus', style: TextStyle(color: AppColors.error)),
+                                ),
+                              ],
+                            ),
+                          );
+
+                          if (confirm == true && context.mounted) {
+                            try {
+                              await ref.read(eventListNotifierProvider.notifier).deleteEvent(event.id);
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Event berhasil dihapus')),
+                                );
+                                context.pop(); // go back to dashboard
+                              }
+                            } catch (e) {
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Gagal menghapus event')),
+                                );
+                              }
+                            }
+                          }
+                        },
+                        icon: const Icon(Icons.delete_outline, color: AppColors.error),
+                        tooltip: 'Hapus Event',
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
+                ),
                 IconButton(
                   onPressed: () => context.push('/chat/${event.id}'),
-                  icon: const Icon(Icons.chat_bubble_outline_rounded, color: Colors.white),
+                  icon: const Icon(Icons.chat_bubble_outline_rounded, color: AppColors.textPrimary),
                   tooltip: 'Chat Divisi',
                 ),
               ],
               flexibleSpace: FlexibleSpaceBar(
                 background: Container(
                   padding: const EdgeInsets.fromLTRB(20, 100, 20, 20),
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [AppColors.primaryDark, AppColors.surface],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                    ),
-                  ),
+                  color: AppColors.surface,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -91,7 +140,7 @@ class _EventDetailContent extends StatelessWidget {
                               event.namaEvent,
                               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                                     fontWeight: FontWeight.w700,
-                                    color: Colors.white,
+                                    color: AppColors.textPrimary,
                                   ),
                             ),
                           ),
@@ -101,23 +150,23 @@ class _EventDetailContent extends StatelessWidget {
                       const Gap(12),
                       Row(
                         children: [
-                          const Icon(Icons.calendar_today_outlined, color: Colors.white70, size: 16),
+                          const Icon(Icons.calendar_today_outlined, color: AppColors.textSecondary, size: 16),
                           const Gap(8),
                           Text(
                             '${dateFormat.format(event.tanggalMulai)} - ${dateFormat.format(event.tanggalSelesai)}',
-                            style: const TextStyle(color: Colors.white70, fontSize: 13),
+                            style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
                           ),
                         ],
                       ),
                       const Gap(8),
                       Row(
                         children: [
-                          const Icon(Icons.location_on_outlined, color: Colors.white70, size: 16),
+                          const Icon(Icons.location_on_outlined, color: AppColors.textSecondary, size: 16),
                           const Gap(8),
                           Expanded(
                             child: Text(
                               event.lokasi ?? 'Tidak ada lokasi',
-                              style: const TextStyle(color: Colors.white70, fontSize: 13),
+                              style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -146,27 +195,40 @@ class _EventDetailContent extends StatelessWidget {
             ),
           ];
         },
-        body: TabBarView(
-          children: [
-            _TabPlaceholder(
-              icon: Icons.schedule_rounded,
-              title: 'Rundown Acara',
-              actionLabel: 'Lihat Rundown',
-              onAction: () => context.push('/rundown/${event.id}'),
-            ),
-            _TabPlaceholder(
-              icon: Icons.checklist_rounded,
-              title: 'Tugas Kepanitiaan',
-              actionLabel: 'Lihat Semua Tugas',
-              onAction: () => context.push('/events/${event.id}/tasks'),
-            ),
-            _TabPlaceholder(
-              icon: Icons.store_rounded,
-              title: 'Vendor Terlibat',
-              actionLabel: 'Lihat Vendor',
-              onAction: () => context.push('/vendors/${event.id}'),
-            ),
-          ],
+        body: Consumer(
+          builder: (context, ref, _) {
+            final user = ref.watch(currentUserProvider);
+            final isAdminOrKetua = user?.role == 'admin' || user?.role == 'ketua';
+
+            return TabBarView(
+              children: [
+                _TabPlaceholder(
+                  icon: Icons.schedule_rounded,
+                  title: 'Rundown Acara',
+                  actionLabel: 'Lihat Rundown',
+                  onAction: () => context.push('/rundown/${event.id}'),
+                  secondaryActionLabel: isAdminOrKetua ? '+ Buat Rundown' : null,
+                  onSecondaryAction: isAdminOrKetua ? () => context.push('/rundown/${event.id}/new') : null,
+                ),
+                _TabPlaceholder(
+                  icon: Icons.checklist_rounded,
+                  title: 'Tugas Kepanitiaan',
+                  actionLabel: 'Lihat Semua Tugas',
+                  onAction: () => context.push('/events/${event.id}/tasks'),
+                  secondaryActionLabel: isAdminOrKetua ? '+ Tambah Tugas via Email' : null,
+                  onSecondaryAction: isAdminOrKetua ? () => context.push('/events/${event.id}/tasks/new') : null,
+                ),
+                _TabPlaceholder(
+                  icon: Icons.store_rounded,
+                  title: 'Vendor Terlibat',
+                  actionLabel: 'Lihat Vendor',
+                  onAction: () => context.push('/vendors/${event.id}'),
+                  secondaryActionLabel: isAdminOrKetua ? '+ Tambah Vendor' : null,
+                  onSecondaryAction: isAdminOrKetua ? () => context.push('/vendors/${event.id}/new') : null,
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
@@ -178,12 +240,16 @@ class _TabPlaceholder extends StatelessWidget {
   final String title;
   final String actionLabel;
   final VoidCallback onAction;
+  final String? secondaryActionLabel;
+  final VoidCallback? onSecondaryAction;
 
   const _TabPlaceholder({
     required this.icon,
     required this.title,
     required this.actionLabel,
     required this.onAction,
+    this.secondaryActionLabel,
+    this.onSecondaryAction,
   });
 
   @override
@@ -200,6 +266,16 @@ class _TabPlaceholder extends StatelessWidget {
             onPressed: onAction,
             child: Text(actionLabel),
           ),
+          if (secondaryActionLabel != null && onSecondaryAction != null) ...[
+            const Gap(12),
+            OutlinedButton(
+              onPressed: onSecondaryAction,
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(color: AppColors.primary),
+              ),
+              child: Text(secondaryActionLabel!),
+            ),
+          ],
         ],
       ),
     );

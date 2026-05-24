@@ -2,6 +2,7 @@ const db = require('../models/sql');
 const { Op } = require('sequelize');
 const { successResponse, errorResponse } = require('../utils/response');
 const { getPaginationParams, buildPaginationMeta, getSortParams } = require('../utils/pagination');
+const { findVisibleEventById } = require('../utils/eventAccess');
 
 function buildLaporanPayload(laporan) {
   return {
@@ -27,7 +28,7 @@ async function createLaporan(req, res, next) {
       return errorResponse(res, { message: 'Judul dan konten wajib diisi', statusCode: 400 });
     }
 
-    const event = await db.Event.findByPk(eventId);
+    const event = await findVisibleEventById(eventId, req);
     if (!event) {
       return errorResponse(res, { message: 'Event tidak ditemukan', statusCode: 404 });
     }
@@ -58,6 +59,12 @@ async function createLaporan(req, res, next) {
 async function listLaporanByEvent(req, res, next) {
   try {
     const eventId = req.params.id;
+    const event = await findVisibleEventById(eventId, req);
+
+    if (!event) {
+      return errorResponse(res, { message: 'Event tidak ditemukan', statusCode: 404 });
+    }
+
     const { page, perPage, offset, limit } = getPaginationParams(req.query);
     const { sortBy, order } = getSortParams(req.query, {
       allowedSortBy: ['created_at', 'tanggal', 'judul'],

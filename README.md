@@ -24,9 +24,18 @@ Konfigurasi `.env` di root project dengan:
 - MongoDB connection string dan mode startup (`MONGO_MODE=full` sebagai default)
 - JWT secret
 - Google Cloud Storage config (optional)
-- CORS allowed origins
+- CORS allowed origins, atau pakai `ALLOWED_ORIGINS=*` kalau ingin menerima semua origin
 
-### 4. Start Development Server
+### 4. Persiapan Deploy
+Sebelum deploy, pastikan ini sudah siap:
+- MySQL aktif dan migrasi sudah dijalankan
+- MongoDB aktif jika `MONGO_MODE=full`
+- Bucket Google Cloud Storage sudah dibuat jika upload file dipakai
+- Service account JSON tersedia jika pakai GCS dari server
+- `JWT_SECRET` sudah diisi dengan nilai yang kuat
+- `ALLOWED_ORIGINS=*` jika frontend bisa datang dari banyak domain
+
+### 5. Start Development Server
 ```bash
 npm run dev
 ```

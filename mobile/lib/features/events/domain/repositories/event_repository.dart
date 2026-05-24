@@ -7,7 +7,18 @@ abstract class EventRepository {
     int perPage = 10,
     String? search,
     String? status,
+    int? ketuaId,
   });
 
   Future<Event> getEventDetail(int id);
+
+  Future<Event> createEvent({
+    required String namaEvent,
+    required DateTime tanggalMulai,
+    required DateTime tanggalSelesai,
+    String? deskripsi,
+    String? lokasi,
+  });
+
+  Future<void> deleteEvent(int id);
 }

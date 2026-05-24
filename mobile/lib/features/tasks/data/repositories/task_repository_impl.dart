@@ -84,4 +84,30 @@ class TaskRepositoryImpl implements TaskRepository {
       throw handleDioError(e);
     }
   }
+
+  @override
+  Future<Task> createTask({
+    required int eventId,
+    required int assigneeId,
+    required String judul,
+    required DateTime tenggatWaktu,
+    required String prioritas,
+    String? deskripsi,
+  }) async {
+    try {
+      final response = await _dio.post(
+        ApiEndpoints.eventTugas(eventId),
+        data: {
+          'assignee_id': assigneeId,
+          'judul': judul,
+          'deskripsi': deskripsi ?? '',
+          'tenggat_waktu': tenggatWaktu.toIso8601String(),
+          'prioritas': prioritas,
+        },
+      );
+      return Task.fromJson(response.data['data']['tugas'] as Map<String, dynamic>);
+    } on DioException catch (e) {
+      throw handleDioError(e);
+    }
+  }
 }

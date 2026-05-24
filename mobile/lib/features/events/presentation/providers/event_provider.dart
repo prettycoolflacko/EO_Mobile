@@ -4,6 +4,7 @@ import 'package:eventsync_mobile/core/network/dio_client.dart';
 import 'package:eventsync_mobile/features/events/data/repositories/event_repository_impl.dart';
 import 'package:eventsync_mobile/features/events/domain/entities/event.dart';
 import 'package:eventsync_mobile/features/events/domain/repositories/event_repository.dart';
+import 'package:eventsync_mobile/features/auth/presentation/providers/auth_provider.dart';
 
 /// Provides the EventRepository.
 final eventRepositoryProvider = Provider<EventRepository>((ref) {
@@ -54,14 +55,17 @@ class EventListState {
 /// Provider for managing the paginated list of events.
 final eventListNotifierProvider =
     StateNotifierProvider<EventListNotifier, EventListState>((ref) {
-  return EventListNotifier(ref.watch(eventRepositoryProvider));
+  final user = ref.watch(currentUserProvider);
+  final filterKetuaId = user?.role == 'ketua' ? user?.id : null;
+  return EventListNotifier(ref.watch(eventRepositoryProvider), filterKetuaId);
 });
 
 class EventListNotifier extends StateNotifier<EventListState> {
   final EventRepository _repository;
+  final int? _filterKetuaId;
   static const int _perPage = 10;
 
-  EventListNotifier(this._repository) : super(const EventListState()) {
+  EventListNotifier(this._repository, this._filterKetuaId) : super(const EventListState()) {
     fetchFirstPage();
   }
 
@@ -80,6 +84,7 @@ class EventListNotifier extends StateNotifier<EventListState> {
         perPage: _perPage,
         search: state.searchQuery,
         status: state.statusFilter,
+        ketuaId: _filterKetuaId,
       );
 
       state = state.copyWith(
@@ -107,6 +112,7 @@ class EventListNotifier extends StateNotifier<EventListState> {
         perPage: _perPage,
         search: state.searchQuery,
         status: state.statusFilter,
+        ketuaId: _filterKetuaId,
       );
 
       final newEvents = response.data ?? [];
@@ -122,6 +128,44 @@ class EventListNotifier extends StateNotifier<EventListState> {
         isLoading: false,
         errorMessage: e.toString(), // Provide user-friendly message via AppException later
       );
+    }
+  }
+
+  Future<void> createEvent({
+    required String namaEvent,
+    required DateTime tanggalMulai,
+    required DateTime tanggalSelesai,
+    String? deskripsi,
+    String? lokasi,
+  }) async {
+    try {
+      final newEvent = await _repository.createEvent(
+        namaEvent: namaEvent,
+        tanggalMulai: tanggalMulai,
+        tanggalSelesai: tanggalSelesai,
+        deskripsi: deskripsi,
+        lokasi: lokasi,
+      );
+      
+      // Add the new event to the top of the list
+      state = state.copyWith(
+        events: [newEvent, ...state.events],
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> deleteEvent(int id) async {
+    try {
+      await _repository.deleteEvent(id);
+      
+      // Remove the event from the list
+      state = state.copyWith(
+        events: state.events.where((e) => e.id != id).toList(),
+      );
+    } catch (e) {
+      rethrow;
     }
   }
 }

@@ -35,4 +35,26 @@ class VendorRepositoryImpl implements VendorRepository {
       throw handleDioError(e);
     }
   }
+
+  @override
+  Future<Vendor> createVendor({
+    required int eventId,
+    required String namaVendor,
+    required String layanan,
+    String? kontak,
+  }) async {
+    try {
+      final response = await _dio.post(
+        ApiEndpoints.eventVendors(eventId),
+        data: {
+          'nama_vendor': namaVendor,
+          'layanan': layanan,
+          if (kontak != null && kontak.isNotEmpty) 'kontak': kontak,
+        },
+      );
+      return Vendor.fromJson(response.data['data']['vendor'] as Map<String, dynamic>);
+    } on DioException catch (e) {
+      throw handleDioError(e);
+    }
+  }
 }

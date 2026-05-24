@@ -19,7 +19,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _divisiController = TextEditingController();
   final _phoneController = TextEditingController();
   bool _obscurePassword = true;
   bool _isLoading = false;
@@ -30,7 +29,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-    _divisiController.dispose();
     _phoneController.dispose();
     super.dispose();
   }
@@ -47,9 +45,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             name: _nameController.text.trim(),
             email: _emailController.text.trim(),
             password: _passwordController.text,
-            divisi: _divisiController.text.trim().isNotEmpty
-                ? _divisiController.text.trim()
-                : null,
+            divisi: 'Staff',
             phone: _phoneController.text.trim().isNotEmpty
                 ? _phoneController.text.trim()
                 : null,
@@ -169,15 +165,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         if (v.length < 6) return 'Minimal 6 karakter';
                         return null;
                       },
-                    ),
-                    const Gap(14),
-                    TextFormField(
-                      controller: _divisiController,
-                      textInputAction: TextInputAction.next,
-                      decoration: const InputDecoration(
-                        hintText: 'Divisi (opsional)',
-                        prefixIcon: Icon(Icons.groups_outlined),
-                      ),
                     ),
                     const Gap(14),
                     TextFormField(
