@@ -1,0 +1,57 @@
+name: eventsync_mobile
+description: EventSync - Event Coordination Platform Mobile App
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State Management
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
+
+  # Networking
+  dio: ^5.8.0+1
+
+  # Navigation
+  go_router: ^14.8.1
+
+  # Storage
+  flutter_secure_storage: ^9.2.4
+  shared_preferences: ^2.5.3
+
+  # Serialization
+  json_annotation: ^4.9.0
+  freezed_annotation: ^3.0.0
+
+  # UI
+  google_fonts: ^6.2.1
+  gap: ^3.0.1
+  cached_network_image: ^3.4.1
+  shimmer: ^3.0.0
+  flutter_svg: ^2.0.17
+
+  # Utils
+  intl: ^0.19.0
+  image_picker: ^1.1.2
+  connectivity_plus: ^6.1.4
+
+  # Icons
+  cupertino_icons: ^1.0.8
+  url_launcher: ^6.3.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  build_runner: ^2.4.15
+  json_serializable: ^6.9.5
+  freezed: ^3.0.0
+  riverpod_generator: ^2.6.5
+
+flutter:
+  uses-material-design: true

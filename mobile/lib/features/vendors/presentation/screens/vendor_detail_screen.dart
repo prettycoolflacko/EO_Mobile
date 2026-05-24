@@ -1,0 +1,211 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gap/gap.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import 'package:eventsync_mobile/core/theme/app_colors.dart';
+import 'package:eventsync_mobile/shared/widgets/status_badge.dart';
+import 'package:eventsync_mobile/features/vendors/domain/entities/vendor.dart';
+import 'package:eventsync_mobile/features/vendors/presentation/providers/vendor_provider.dart';
+
+class VendorDetailScreen extends ConsumerWidget {
+  final int vendorId;
+
+  const VendorDetailScreen({super.key, required this.vendorId});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final vendorAsync = ref.watch(vendorDetailProvider(vendorId));
+
+    return Scaffold(
+      backgroundColor: AppColors.backgroundDark,
+      appBar: AppBar(
+        title: const Text('Detail Vendor'),
+      ),
+      body: vendorAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (err, stack) => Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error_outline_rounded,
+                  color: AppColors.error, size: 48),
+              const Gap(16),
+              Text(err.toString(),
+                  style: const TextStyle(color: AppColors.error)),
+              const Gap(16),
+              ElevatedButton(
+                onPressed: () => ref.invalidate(vendorDetailProvider(vendorId)),
+                child: const Text('Coba Lagi'),
+              ),
+            ],
+          ),
+        ),
+        data: (vendor) => _VendorDetailContent(vendor: vendor),
+      ),
+    );
+  }
+}
+
+class _VendorDetailContent extends StatelessWidget {
+  final Vendor vendor;
+
+  const _VendorDetailContent({required this.vendor});
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      vendor.namaVendor,
+                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.textPrimary,
+                          ),
+                    ),
+                    const Gap(8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withAlpha(30),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        vendor.kategori.toUpperCase(),
+                        style: const TextStyle(
+                          color: AppColors.primary,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              StatusBadge(status: vendor.status),
+            ],
+          ),
+          const Gap(32),
+
+          // Contact Card
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: AppColors.cardDark,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppColors.glassBorder, width: 0.5),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Kontak Person',
+                  style: TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const Gap(16),
+                Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 20,
+                      backgroundColor: AppColors.surfaceContainer,
+                      child: Text(
+                        vendor.picName.substring(0, 1).toUpperCase(),
+                        style: const TextStyle(
+                          color: AppColors.textPrimary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    const Gap(12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            vendor.picName,
+                            style: const TextStyle(
+                              color: AppColors.textPrimary,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15,
+                            ),
+                          ),
+                          const Gap(2),
+                          Text(
+                            vendor.picPhone,
+                            style: const TextStyle(
+                              color: AppColors.textSecondary,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () async {
+                        final url = Uri.parse('tel:${vendor.picPhone}');
+                        if (await canLaunchUrl(url)) {
+                          await launchUrl(url);
+                        }
+                      },
+                      icon: const Icon(Icons.phone_rounded, color: AppColors.primary),
+                      style: IconButton.styleFrom(
+                        backgroundColor: AppColors.primary.withAlpha(20),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const Gap(24),
+
+          // Notes
+          if (vendor.notes != null && vendor.notes!.isNotEmpty) ...[
+            const Text(
+              'Catatan Tambahan',
+              style: TextStyle(
+                color: AppColors.textSecondary,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const Gap(12),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppColors.surfaceVariant,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.surfaceContainer),
+              ),
+              child: Text(
+                vendor.notes!,
+                style: const TextStyle(
+                  color: AppColors.textPrimary,
+                  fontSize: 14,
+                  height: 1.5,
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}

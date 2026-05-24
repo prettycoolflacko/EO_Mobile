@@ -232,4 +232,57 @@ async function deleteTugas(req, res, next) {
   }
 }
 
-module.exports = { createTugas, listTugasByEvent, getTugasById, updateTugas, updateTugasStatus, deleteTugas };
+async function listTugas(req, res, next) {
+  try {
+    const { page, perPage, offset, limit } = getPaginationParams(req.query);
+    const { sortBy, order } = getSortParams(req.query, {
+      allowedSortBy: ['created_at', 'deadline', 'prioritas', 'status', 'judul'],
+      defaultSortBy: 'created_at',
+      defaultOrder: 'DESC',
+    });
+    const where = {};
+
+    if (req.query.status) {
+      where.status = req.query.status;
+    }
+
+    if (req.query.prioritas) {
+      where.prioritas = req.query.prioritas;
+    }
+
+    if (req.query.assignee_id) {
+      where.assignee_id = req.query.assignee_id;
+    }
+
+    if (req.query.divisi) {
+      where.divisi = req.query.divisi;
+    }
+
+    if (req.query.q) {
+      where[Op.or] = [
+        { judul: { [Op.like]: `%${req.query.q}%` } },
+        { deskripsi: { [Op.like]: `%${req.query.q}%` } },
+      ];
+    }
+
+    const { rows, count } = await db.Tugas.findAndCountAll({
+      where,
+      order: [[sortBy, order]],
+      include: [{ model: db.User, as: 'assignee', attributes: ['id', 'name', 'email', 'divisi'] }],
+      offset,
+      limit,
+      distinct: true,
+    });
+
+    return successResponse(res, {
+      message: 'Daftar semua tugas berhasil diambil',
+      data: { tugas: rows.map(buildTugasPayload) },
+      meta: buildPaginationMeta({ page, perPage, total: count }),
+      statusCode: 200,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+module.exports = { createTugas, listTugasByEvent, getTugasById, updateTugas, updateTugasStatus, deleteTugas, listTugas };
