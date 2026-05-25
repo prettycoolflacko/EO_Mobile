@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:eventsync_mobile/features/notifications/presentation/providers/notification_provider.dart';
@@ -11,14 +12,14 @@ class AppScaffold extends ConsumerWidget {
   const AppScaffold({super.key, required this.child});
 
   static const _tabs = [
-    _TabItem(icon: Icons.dashboard_rounded, label: 'Home', path: '/'),
-    _TabItem(icon: Icons.checklist_rounded, label: 'Tugas', path: '/tasks'),
-    _TabItem(icon: Icons.event_rounded, label: 'Event', path: '/events'),
+    _TabItem(icon: LucideIcons.home, label: 'Home', path: '/'),
+    _TabItem(icon: LucideIcons.checkSquare, label: 'Tugas', path: '/tasks'),
+    _TabItem(icon: LucideIcons.calendar, label: 'Event', path: '/events'),
     _TabItem(
-        icon: Icons.notifications_rounded,
+        icon: LucideIcons.bell,
         label: 'Notifikasi',
         path: '/notifications'),
-    _TabItem(icon: Icons.person_rounded, label: 'Profil', path: '/profile'),
+    _TabItem(icon: LucideIcons.user, label: 'Profil', path: '/profile'),
   ];
 
   int _currentIndex(BuildContext context) {

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 import 'package:eventsync_mobile/core/theme/app_colors.dart';
 import 'package:eventsync_mobile/shared/widgets/paginated_list.dart';
@@ -23,7 +24,7 @@ class EventListScreen extends ConsumerWidget {
         title: const Text('Daftar Event'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.filter_list_rounded),
+            icon: const Icon(LucideIcons.filter),
             onPressed: () {
               // TODO: Implement filter bottom sheet (Status)
             },
@@ -42,7 +43,7 @@ class EventListScreen extends ConsumerWidget {
         emptyState: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.event_note_rounded,
+            Icon(LucideIcons.calendar,
                 size: 64, color: AppColors.textSecondary),
             Gap(16),
             Text('Belum ada event',
@@ -94,7 +95,7 @@ class _EventCard extends StatelessWidget {
             const Gap(12),
             Row(
               children: [
-                const Icon(Icons.location_on_outlined,
+                const Icon(LucideIcons.mapPin,
                     size: 16, color: AppColors.textSecondary),
                 const Gap(8),
                 Expanded(
@@ -110,7 +111,7 @@ class _EventCard extends StatelessWidget {
             const Gap(8),
             Row(
               children: [
-                const Icon(Icons.calendar_today_outlined,
+                const Icon(LucideIcons.calendar,
                     size: 16, color: AppColors.textSecondary),
                 const Gap(8),
                 Text(

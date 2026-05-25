@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 import 'package:eventsync_mobile/core/theme/app_colors.dart';
 import 'package:eventsync_mobile/features/admin/presentation/providers/user_provider.dart';
@@ -281,7 +282,7 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
               onChanged: _onSearchChanged,
               decoration: InputDecoration(
                 hintText: 'Cari nama atau email...',
-                prefixIcon: const Icon(Icons.search),
+                prefixIcon: const Icon(LucideIcons.search),
                 filled: true,
                 fillColor: AppColors.cardDark,
                 border: OutlineInputBorder(
@@ -375,7 +376,7 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
                                 ],
                               ),
                               trailing: PopupMenuButton<String>(
-                                icon: const Icon(Icons.more_vert, color: AppColors.textSecondary),
+                                icon: const Icon(LucideIcons.moreVertical, color: AppColors.textSecondary),
                                 color: AppColors.cardDark,
                                 onSelected: (value) {
                                   if (value == 'divisi') _changeDivisi(user);
@@ -391,7 +392,7 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
                                       value: 'divisi',
                                       child: Row(
                                         children: [
-                                          Icon(Icons.groups_outlined, color: AppColors.textPrimary, size: 20),
+                                          Icon(LucideIcons.users, color: AppColors.textPrimary, size: 20),
                                           Gap(12),
                                           Text('Ubah Divisi', style: TextStyle(color: AppColors.textPrimary)),
                                         ],
@@ -402,7 +403,7 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
                                         value: 'role',
                                         child: Row(
                                           children: [
-                                            Icon(Icons.admin_panel_settings_outlined, color: AppColors.textPrimary, size: 20),
+                                            Icon(LucideIcons.shield, color: AppColors.textPrimary, size: 20),
                                             Gap(12),
                                             Text('Ubah Role', style: TextStyle(color: AppColors.textPrimary)),
                                           ],
@@ -412,7 +413,7 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
                                         value: 'delete',
                                         child: Row(
                                           children: [
-                                            Icon(Icons.delete_outline, color: AppColors.error, size: 20),
+                                            Icon(LucideIcons.trash, color: AppColors.error, size: 20),
                                             Gap(12),
                                             Text('Hapus User', style: TextStyle(color: AppColors.error)),
                                           ],

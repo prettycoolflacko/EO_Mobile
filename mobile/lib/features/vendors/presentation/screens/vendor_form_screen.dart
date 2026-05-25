@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gap/gap.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 import 'package:eventsync_mobile/core/theme/app_colors.dart';
 import 'package:eventsync_mobile/features/vendors/presentation/providers/vendor_provider.dart';
@@ -100,7 +101,7 @@ class _VendorFormScreenState extends ConsumerState<VendorFormScreen> {
                   textInputAction: TextInputAction.next,
                   decoration: const InputDecoration(
                     hintText: 'Nama Vendor *',
-                    prefixIcon: Icon(Icons.store_outlined),
+                    prefixIcon: Icon(LucideIcons.store),
                   ),
                   validator: (v) =>
                       v == null || v.trim().isEmpty ? 'Nama vendor wajib diisi' : null,
@@ -112,7 +113,7 @@ class _VendorFormScreenState extends ConsumerState<VendorFormScreen> {
                   textInputAction: TextInputAction.next,
                   decoration: const InputDecoration(
                     hintText: 'Layanan (Misal: Katering, Dekorasi) *',
-                    prefixIcon: Icon(Icons.room_service_outlined),
+                    prefixIcon: Icon(LucideIcons.briefcase),
                   ),
                   validator: (v) =>
                       v == null || v.trim().isEmpty ? 'Layanan wajib diisi' : null,
@@ -124,7 +125,7 @@ class _VendorFormScreenState extends ConsumerState<VendorFormScreen> {
                   textInputAction: TextInputAction.done,
                   decoration: const InputDecoration(
                     hintText: 'Kontak Vendor (Opsional)',
-                    prefixIcon: Icon(Icons.phone_outlined),
+                    prefixIcon: Icon(LucideIcons.phone),
                   ),
                 ),
                 

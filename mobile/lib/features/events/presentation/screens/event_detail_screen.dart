@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:gap/gap.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 import 'package:eventsync_mobile/core/theme/app_colors.dart';
 import 'package:eventsync_mobile/shared/widgets/status_badge.dart';
@@ -27,7 +28,7 @@ class EventDetailScreen extends ConsumerWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline_rounded, color: AppColors.error, size: 48),
+              const Icon(LucideIcons.alertCircle, color: AppColors.error, size: 48),
               const Gap(16),
               Text(err.toString(), style: const TextStyle(color: AppColors.error)),
               const Gap(16),
@@ -149,7 +150,7 @@ class _EventDetailContent extends StatelessWidget {
                                 }
                               }
                             },
-                            icon: const Icon(Icons.edit_calendar_outlined, color: AppColors.textPrimary),
+                            icon: const Icon(LucideIcons.pencil, color: AppColors.textPrimary),
                             tooltip: 'Ubah Status Event',
                           ),
                         if (canDelete)
@@ -192,7 +193,7 @@ class _EventDetailContent extends StatelessWidget {
                                 }
                               }
                             },
-                            icon: const Icon(Icons.delete_outline, color: AppColors.error),
+                            icon: const Icon(LucideIcons.trash, color: AppColors.error),
                             tooltip: 'Hapus Event',
                           ),
                       ],
@@ -201,7 +202,7 @@ class _EventDetailContent extends StatelessWidget {
                 ),
                 IconButton(
                   onPressed: () => context.push('/chat/${event.id}'),
-                  icon: const Icon(Icons.chat_bubble_outline_rounded, color: AppColors.textPrimary),
+                  icon: const Icon(LucideIcons.messageCircle, color: AppColors.textPrimary),
                   tooltip: 'Chat Divisi',
                 ),
               ],
@@ -232,7 +233,7 @@ class _EventDetailContent extends StatelessWidget {
                       const Gap(12),
                       Row(
                         children: [
-                          const Icon(Icons.calendar_today_outlined, color: AppColors.textSecondary, size: 16),
+                          const Icon(LucideIcons.calendar, color: AppColors.textSecondary, size: 16),
                           const Gap(8),
                           Text(
                             '${dateFormat.format(event.tanggalMulai)} - ${dateFormat.format(event.tanggalSelesai)}',
@@ -243,7 +244,7 @@ class _EventDetailContent extends StatelessWidget {
                       const Gap(8),
                       Row(
                         children: [
-                          const Icon(Icons.location_on_outlined, color: AppColors.textSecondary, size: 16),
+                          const Icon(LucideIcons.mapPin, color: AppColors.textSecondary, size: 16),
                           const Gap(8),
                           Expanded(
                             child: Text(
@@ -286,7 +287,7 @@ class _EventDetailContent extends StatelessWidget {
             return TabBarView(
               children: [
                 _TabPlaceholder(
-                  icon: Icons.schedule_rounded,
+                  icon: LucideIcons.clock,
                   title: 'Rundown Acara',
                   actionLabel: 'Lihat Rundown',
                   onAction: () => context.push('/rundown/${event.id}'),
@@ -294,7 +295,7 @@ class _EventDetailContent extends StatelessWidget {
                   onSecondaryAction: canAddItems ? () => context.push('/rundown/${event.id}/new') : null,
                 ),
                 _TabPlaceholder(
-                  icon: Icons.checklist_rounded,
+                  icon: LucideIcons.checkSquare,
                   title: 'Tugas Kepanitiaan',
                   actionLabel: 'Lihat Semua Tugas',
                   onAction: () => context.push('/events/${event.id}/tasks'),
@@ -302,7 +303,7 @@ class _EventDetailContent extends StatelessWidget {
                   onSecondaryAction: canAddItems ? () => context.push('/events/${event.id}/tasks/new') : null,
                 ),
                 _TabPlaceholder(
-                  icon: Icons.store_rounded,
+                  icon: LucideIcons.store,
                   title: 'Vendor Terlibat',
                   actionLabel: 'Lihat Vendor',
                   onAction: () => context.push('/vendors/${event.id}'),

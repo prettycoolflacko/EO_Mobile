@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gap/gap.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 import 'package:eventsync_mobile/core/theme/app_colors.dart';
 import 'package:eventsync_mobile/features/rundown/presentation/providers/rundown_provider.dart';
@@ -169,7 +170,7 @@ class _RundownFormScreenState extends ConsumerState<RundownFormScreen> {
                   textInputAction: TextInputAction.next,
                   decoration: const InputDecoration(
                     hintText: 'Nama Kegiatan *',
-                    prefixIcon: Icon(Icons.event_note_outlined),
+                    prefixIcon: Icon(LucideIcons.calendar),
                   ),
                   validator: (v) =>
                       v == null || v.trim().isEmpty ? 'Nama kegiatan wajib diisi' : null,
@@ -196,7 +197,7 @@ class _RundownFormScreenState extends ConsumerState<RundownFormScreen> {
                               ),
                               child: Row(
                                 children: [
-                                  const Icon(Icons.access_time, size: 18, color: AppColors.textSecondary),
+                                  const Icon(LucideIcons.clock, size: 18, color: AppColors.textSecondary),
                                   const Gap(8),
                                   Expanded(
                                     child: Text(
@@ -233,7 +234,7 @@ class _RundownFormScreenState extends ConsumerState<RundownFormScreen> {
                               ),
                               child: Row(
                                 children: [
-                                  const Icon(Icons.access_time, size: 18, color: AppColors.textSecondary),
+                                  const Icon(LucideIcons.clock, size: 18, color: AppColors.textSecondary),
                                   const Gap(8),
                                   Expanded(
                                     child: Text(
@@ -260,7 +261,7 @@ class _RundownFormScreenState extends ConsumerState<RundownFormScreen> {
                   textInputAction: TextInputAction.done,
                   decoration: const InputDecoration(
                     hintText: 'PIC / Penanggung Jawab (Opsional)',
-                    prefixIcon: Icon(Icons.person_outline),
+                    prefixIcon: Icon(LucideIcons.user),
                   ),
                 ),
                 

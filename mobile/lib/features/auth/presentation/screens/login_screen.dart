@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gap/gap.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 import 'package:eventsync_mobile/core/theme/app_colors.dart';
 import 'package:eventsync_mobile/core/errors/app_exception.dart';
@@ -62,6 +63,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
             email: _emailController.text.trim(),
             password: _passwordController.text,
           );
+    } on UnauthorizedException catch (e) {
+      setState(() => _errorMessage = e.message);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.message)),
+        );
+      }
     } on AppException catch (e) {
       setState(() => _errorMessage = e.message);
     } catch (_) {
@@ -106,7 +114,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                         ],
                       ),
                       child: const Icon(
-                        Icons.event_available_rounded,
+                        LucideIcons.calendar,
                         color: Colors.white,
                         size: 40,
                       ),
@@ -141,7 +149,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.error_outline,
+                            const Icon(LucideIcons.alertCircle,
                                 color: AppColors.error, size: 20),
                             const Gap(8),
                             Expanded(
@@ -166,7 +174,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                             textInputAction: TextInputAction.next,
                             decoration: const InputDecoration(
                               hintText: 'Email',
-                              prefixIcon: Icon(Icons.email_outlined),
+                              prefixIcon: Icon(LucideIcons.mail),
                             ),
                             validator: (v) {
                               if (v == null || v.trim().isEmpty) {
@@ -184,11 +192,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                             onFieldSubmitted: (_) => _handleLogin(),
                             decoration: InputDecoration(
                               hintText: 'Password',
-                              prefixIcon: const Icon(Icons.lock_outlined),
+                              prefixIcon: const Icon(LucideIcons.lock),
                               suffixIcon: IconButton(
                                 icon: Icon(_obscurePassword
-                                    ? Icons.visibility_off_outlined
-                                    : Icons.visibility_outlined),
+                                ? LucideIcons.eyeOff
+                                : LucideIcons.eye),
                                 onPressed: () => setState(
                                     () => _obscurePassword = !_obscurePassword),
                               ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 import 'package:eventsync_mobile/core/theme/app_colors.dart';
 import 'package:eventsync_mobile/features/auth/presentation/providers/auth_provider.dart';
@@ -67,18 +68,18 @@ class ProfileScreen extends ConsumerWidget {
                 const Gap(32),
 
                 // Info tiles
-                _InfoTile(icon: Icons.email_outlined, label: 'Email', value: user.email),
+                _InfoTile(icon: LucideIcons.mail, label: 'Email', value: user.email),
                 _InfoTile(
-                    icon: Icons.groups_outlined,
+                    icon: LucideIcons.users,
                     label: 'Divisi',
                     value: user.divisi ?? 'Staff'),
                 if (user.phone != null)
                   _InfoTile(
-                      icon: Icons.phone_outlined,
+                      icon: LucideIcons.phone,
                       label: 'Telepon',
                       value: user.phone!),
                 _InfoTile(
-                  icon: Icons.circle,
+                  icon: LucideIcons.circle,
                   label: 'Status',
                   value: user.isActive ? 'Aktif' : 'Tidak Aktif',
                   valueColor:
@@ -115,7 +116,7 @@ class ProfileScreen extends ConsumerWidget {
                         await ref.read(authStateProvider.notifier).logout();
                       }
                     },
-                    icon: const Icon(Icons.logout_rounded, color: AppColors.error),
+                    icon: const Icon(LucideIcons.logOut, color: AppColors.error),
                     label: const Text('Logout',
                         style: TextStyle(color: AppColors.error)),
                     style: OutlinedButton.styleFrom(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 import 'package:eventsync_mobile/core/theme/app_colors.dart';
 import 'package:eventsync_mobile/shared/widgets/status_badge.dart';
@@ -154,7 +155,7 @@ class VendorDetailScreen extends ConsumerWidget {
                     value: 'edit',
                     child: Row(
                       children: [
-                        Icon(Icons.edit_outlined, color: AppColors.textPrimary, size: 20),
+                        Icon(LucideIcons.pencil, color: AppColors.textPrimary, size: 20),
                         Gap(12),
                         Text('Edit', style: TextStyle(color: AppColors.textPrimary)),
                       ],
@@ -164,7 +165,7 @@ class VendorDetailScreen extends ConsumerWidget {
                     value: 'delete',
                     child: Row(
                       children: [
-                        Icon(Icons.delete_outline, color: AppColors.error, size: 20),
+                        Icon(LucideIcons.trash, color: AppColors.error, size: 20),
                         Gap(12),
                         Text('Hapus', style: TextStyle(color: AppColors.error)),
                       ],
@@ -182,7 +183,7 @@ class VendorDetailScreen extends ConsumerWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline_rounded,
+                const Icon(LucideIcons.alertCircle,
                   color: AppColors.error, size: 48),
               const Gap(16),
               Text(err.toString(),
@@ -317,7 +318,7 @@ class _VendorDetailContent extends StatelessWidget {
                           await launchUrl(url);
                         }
                       },
-                      icon: const Icon(Icons.phone_rounded, color: AppColors.primary),
+                      icon: const Icon(LucideIcons.phone, color: AppColors.primary),
                       style: IconButton.styleFrom(
                         backgroundColor: AppColors.primary.withAlpha(20),
                       ),

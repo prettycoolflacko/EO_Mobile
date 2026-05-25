@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 import 'package:eventsync_mobile/core/theme/app_colors.dart';
 
@@ -44,7 +45,7 @@ class PaginatedListView<T> extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline_rounded,
+                const Icon(LucideIcons.alertCircle,
                   color: AppColors.error, size: 48),
               const Gap(16),
               Text(errorMessage!, style: const TextStyle(color: AppColors.error)),

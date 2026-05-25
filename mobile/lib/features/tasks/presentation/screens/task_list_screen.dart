@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 import 'package:eventsync_mobile/core/theme/app_colors.dart';
 import 'package:eventsync_mobile/shared/widgets/paginated_list.dart';
@@ -43,7 +44,7 @@ class _TaskListScreenState extends ConsumerState<TaskListScreen> {
         title: Text(widget.eventId == null ? 'Tugas Saya' : 'Tugas Event'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.filter_list_rounded),
+            icon: const Icon(LucideIcons.filter),
             onPressed: () {
               // TODO: Filter
             },
@@ -64,7 +65,7 @@ class _TaskListScreenState extends ConsumerState<TaskListScreen> {
         emptyState: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.checklist_rounded,
+            Icon(LucideIcons.checkSquare,
                 size: 64, color: AppColors.textSecondary),
             Gap(16),
             Text('Belum ada tugas',
@@ -81,7 +82,7 @@ class _TaskListScreenState extends ConsumerState<TaskListScreen> {
                   return FloatingActionButton.extended(
                     onPressed: () => context.push('/events/${widget.eventId}/tasks/new'),
                     backgroundColor: AppColors.primary,
-                    icon: const Icon(Icons.add_task, color: Colors.white),
+                    icon: const Icon(LucideIcons.plusCircle, color: Colors.white),
                     label: const Text('Buat Tugas', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                   );
                 }
@@ -146,7 +147,7 @@ class _TaskCard extends StatelessWidget {
                 if (task.deadline != null)
                   Row(
                     children: [
-                      const Icon(Icons.access_time_rounded,
+                        const Icon(LucideIcons.clock,
                           size: 14, color: AppColors.textSecondary),
                       const Gap(4),
                       Text(

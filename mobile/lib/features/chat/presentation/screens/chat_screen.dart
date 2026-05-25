@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 import 'package:eventsync_mobile/core/theme/app_colors.dart';
 import 'package:eventsync_mobile/features/chat/domain/entities/chat_message.dart';
@@ -92,7 +93,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               width: double.infinity,
               child: const Row(
                 children: [
-                  Icon(Icons.warning_amber_rounded, color: AppColors.warning),
+                  Icon(LucideIcons.alertTriangle, color: AppColors.warning),
                   Gap(12),
                   Expanded(
                     child: Text(
@@ -116,7 +117,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.chat_bubble_outline_rounded,
+                            Icon(LucideIcons.messageCircle,
                                 size: 64, color: AppColors.textSecondary),
                             Gap(16),
                             Text('Belum ada pesan',
@@ -153,7 +154,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               color: AppColors.error.withAlpha(50),
               child: Row(
                 children: [
-                  const Icon(Icons.warning_amber_rounded,
+                    const Icon(LucideIcons.alertTriangle,
                       color: AppColors.error, size: 16),
                   const Gap(8),
                   Expanded(
@@ -188,7 +189,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   onPressed: () {
                     // TODO: Attachment picker (Phase 4 stretch goal)
                   },
-                  icon: const Icon(Icons.attach_file_rounded, color: AppColors.textSecondary),
+                  icon: const Icon(LucideIcons.paperclip, color: AppColors.textSecondary),
                 ),
                 const Gap(8),
                 Expanded(
@@ -228,7 +229,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                             height: 20,
                             child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                           )
-                        : const Icon(Icons.send_rounded, color: Colors.white),
+                        : const Icon(LucideIcons.send, color: Colors.white),
                   ),
                 ),
               ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:eventsync_mobile/core/theme/app_colors.dart';
 
 /// Status badge chip used for tasks, events, vendors, rundowns.
@@ -74,15 +75,15 @@ class PriorityBadge extends StatelessWidget {
   IconData get _icon {
     switch (priority.toLowerCase()) {
       case 'kritis':
-        return Icons.priority_high_rounded;
+        return LucideIcons.alertTriangle;
       case 'tinggi':
-        return Icons.arrow_upward_rounded;
+        return LucideIcons.arrowUp;
       case 'sedang':
-        return Icons.remove_rounded;
+        return LucideIcons.minus;
       case 'rendah':
-        return Icons.arrow_downward_rounded;
+        return LucideIcons.arrowDown;
       default:
-        return Icons.remove_rounded;
+        return LucideIcons.minus;
     }
   }
 

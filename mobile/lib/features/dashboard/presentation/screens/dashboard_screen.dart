@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 import 'package:eventsync_mobile/core/theme/app_colors.dart';
 import 'package:eventsync_mobile/shared/widgets/status_badge.dart';
@@ -86,7 +87,7 @@ class DashboardScreen extends ConsumerWidget {
                       IconButton(
                         onPressed: () => context.push('/notifications'),
                         icon: const Icon(
-                          Icons.notifications_outlined,
+                          LucideIcons.bell,
                           color: AppColors.textSecondary,
                         ),
                       ),
@@ -121,7 +122,7 @@ class DashboardScreen extends ConsumerWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     children: [
                       _StatCard(
-                        icon: Icons.checklist_rounded,
+                        icon: LucideIcons.checkSquare,
                         label: 'Tugas Aktif',
                         value: tasksState.isLoading ? '-' : taskCount.toString(),
                         color: AppColors.primary,
@@ -129,7 +130,7 @@ class DashboardScreen extends ConsumerWidget {
                       ),
                       const Gap(12),
                       _StatCard(
-                        icon: Icons.event_rounded,
+                        icon: LucideIcons.calendar,
                         label: 'Event Aktif',
                         value: eventsState.isLoading ? '-' : eventCount.toString(),
                         color: AppColors.success,
@@ -137,14 +138,14 @@ class DashboardScreen extends ConsumerWidget {
                       ),
                       const Gap(12),
                       const _StatCard(
-                        icon: Icons.schedule_rounded,
+                        icon: LucideIcons.clock,
                         label: 'Rundown',
                         value: '-',
                         color: AppColors.warning,
                       ),
                       const Gap(12),
                       const _StatCard(
-                        icon: Icons.store_rounded,
+                        icon: LucideIcons.store,
                         label: 'Vendor',
                         value: '-',
                         color: AppColors.info,
@@ -172,13 +173,13 @@ class DashboardScreen extends ConsumerWidget {
                           children: [
                             if (user?.role == 'admin' || user?.role == 'ketua')
                               _ActionChip(
-                                icon: Icons.manage_accounts_outlined,
+                                icon: LucideIcons.settings,
                                 label: user?.role == 'admin' ? 'Kelola User' : 'Kelola Staff & Divisi',
                                 color: AppColors.info,
                                 onTap: () => context.push('/admin/users'),
                               ),
                             _ActionChip(
-                              icon: Icons.add_chart_rounded,
+                              icon: LucideIcons.barChart3,
                               label: 'Buat Event Baru',
                               color: AppColors.primary,
                               onTap: () => context.push('/admin/events/new'),
@@ -207,7 +208,7 @@ class DashboardScreen extends ConsumerWidget {
                     ? const Center(child: CircularProgressIndicator())
                     : urgentTasks.isEmpty
                         ? const _EmptyPlaceholder(
-                            icon: Icons.task_alt_rounded,
+                            icon: LucideIcons.checkCircle,
                             message: 'Tidak ada tugas mendesak',
                           )
                         : ListView.separated(
@@ -238,7 +239,7 @@ class DashboardScreen extends ConsumerWidget {
                     ? const Center(child: CircularProgressIndicator())
                     : activeEvents.isEmpty
                         ? const _EmptyPlaceholder(
-                            icon: Icons.event_note_rounded,
+                            icon: LucideIcons.calendar,
                             message: 'Tidak ada event aktif',
                           )
                         : ListView.separated(
@@ -418,7 +419,7 @@ class _CompactTaskCard extends StatelessWidget {
                     const Gap(4),
                     Row(
                       children: [
-                        const Icon(Icons.access_time_rounded, size: 14, color: AppColors.error),
+                        const Icon(LucideIcons.clock, size: 14, color: AppColors.error),
                         const Gap(4),
                         Text(
                           dateFormat.format(task.deadline!),
@@ -471,7 +472,7 @@ class _CompactEventCard extends StatelessWidget {
                   const Gap(4),
                   Row(
                     children: [
-                      const Icon(Icons.calendar_today_outlined, size: 14, color: AppColors.textSecondary),
+                      const Icon(LucideIcons.calendar, size: 14, color: AppColors.textSecondary),
                       const Gap(4),
                       Text(
                         dateFormat.format(event.tanggalMulai),
@@ -482,7 +483,7 @@ class _CompactEventCard extends StatelessWidget {
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right_rounded, color: AppColors.textSecondary),
+            const Icon(LucideIcons.chevronRight, color: AppColors.textSecondary),
           ],
         ),
       ),

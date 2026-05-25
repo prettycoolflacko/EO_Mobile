@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gap/gap.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 import 'package:eventsync_mobile/core/theme/app_colors.dart';
 import 'package:eventsync_mobile/shared/widgets/status_badge.dart';
@@ -23,7 +24,7 @@ class VendorListScreen extends ConsumerWidget {
         title: const Text('Daftar Vendor'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh_rounded),
+            icon: const Icon(LucideIcons.refreshCw),
             onPressed: () => ref.invalidate(vendorListProvider(eventId)),
           ),
         ],
@@ -34,7 +35,7 @@ class VendorListScreen extends ConsumerWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline_rounded,
+                const Icon(LucideIcons.alertCircle,
                   color: AppColors.error, size: 48),
               const Gap(16),
               Text(err.toString(),
@@ -48,7 +49,7 @@ class VendorListScreen extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.store_rounded,
+                    Icon(LucideIcons.store,
                       size: 64, color: AppColors.textSecondary),
                   Gap(16),
                   Text('Belum ada vendor',
@@ -126,7 +127,7 @@ class _VendorCard extends StatelessWidget {
             const Gap(16),
             Row(
               children: [
-                const Icon(Icons.person_outline_rounded,
+                const Icon(LucideIcons.user,
                     size: 16, color: AppColors.textSecondary),
                 const Gap(8),
                 Text(

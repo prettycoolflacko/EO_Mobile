@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 import 'package:eventsync_mobile/core/theme/app_colors.dart';
 import 'package:eventsync_mobile/core/errors/app_exception.dart';
@@ -151,7 +152,7 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
                   textInputAction: TextInputAction.next,
                   decoration: const InputDecoration(
                     hintText: 'Nama Event *',
-                    prefixIcon: Icon(Icons.event_outlined),
+                    prefixIcon: Icon(LucideIcons.calendar),
                   ),
                   validator: (v) =>
                       v == null || v.trim().isEmpty ? 'Nama event wajib diisi' : null,
@@ -164,7 +165,7 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
                   maxLines: 3,
                   decoration: const InputDecoration(
                     hintText: 'Deskripsi (Opsional)',
-                    prefixIcon: Icon(Icons.description_outlined),
+                    prefixIcon: Icon(LucideIcons.fileText),
                   ),
                 ),
                 const Gap(16),
@@ -174,7 +175,7 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
                   textInputAction: TextInputAction.done,
                   decoration: const InputDecoration(
                     hintText: 'Lokasi (Opsional)',
-                    prefixIcon: Icon(Icons.location_on_outlined),
+                    prefixIcon: Icon(LucideIcons.mapPin),
                   ),
                 ),
                 const Gap(24),

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 import 'package:eventsync_mobile/core/theme/app_colors.dart';
 import 'package:eventsync_mobile/features/tasks/presentation/providers/task_provider.dart';
@@ -157,7 +158,7 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
                   keyboardType: TextInputType.emailAddress,
                   decoration: const InputDecoration(
                     hintText: 'Email Staf Penerima Tugas *',
-                    prefixIcon: Icon(Icons.alternate_email),
+                    prefixIcon: Icon(LucideIcons.atSign),
                   ),
                   validator: (v) =>
                       v == null || v.trim().isEmpty ? 'Email wajib diisi' : null,
@@ -174,7 +175,7 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
                   textInputAction: TextInputAction.next,
                   decoration: const InputDecoration(
                     hintText: 'Judul Tugas *',
-                    prefixIcon: Icon(Icons.task_alt),
+                    prefixIcon: Icon(LucideIcons.checkCircle),
                   ),
                   validator: (v) =>
                       v == null || v.trim().isEmpty ? 'Judul tugas wajib diisi' : null,
@@ -187,7 +188,7 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
                   maxLines: 3,
                   decoration: const InputDecoration(
                     hintText: 'Deskripsi Detail (Opsional)',
-                    prefixIcon: Icon(Icons.description_outlined),
+                    prefixIcon: Icon(LucideIcons.fileText),
                   ),
                 ),
                 const Gap(24),
@@ -246,7 +247,7 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
                               ),
                               child: Row(
                                 children: [
-                                  const Icon(Icons.calendar_today, size: 18, color: AppColors.textSecondary),
+                                  const Icon(LucideIcons.calendar, size: 18, color: AppColors.textSecondary),
                                   const Gap(8),
                                   Expanded(
                                     child: Text(

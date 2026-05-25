@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 import 'package:eventsync_mobile/core/theme/app_colors.dart';
 import 'package:eventsync_mobile/shared/widgets/status_badge.dart';
@@ -27,7 +28,7 @@ class RundownScreen extends ConsumerWidget {
         title: const Text('Rundown Acara'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh_rounded),
+            icon: const Icon(LucideIcons.refreshCw),
             onPressed: () => ref.invalidate(rundownListProvider(eventId)),
           ),
         ],
@@ -38,7 +39,7 @@ class RundownScreen extends ConsumerWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline_rounded,
+                const Icon(LucideIcons.alertCircle,
                   color: AppColors.error, size: 48),
               const Gap(16),
               Text(err.toString(),
@@ -52,7 +53,7 @@ class RundownScreen extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.schedule_rounded,
+                    Icon(LucideIcons.clock,
                       size: 64, color: AppColors.textSecondary),
                   Gap(16),
                   Text('Belum ada rundown untuk event ini',
@@ -205,7 +206,7 @@ class _TimelineTile extends ConsumerWidget {
                         if (isAdmin)
                           GestureDetector(
                             onTap: () => _showUpdateStatusMenu(context, ref),
-                            child: const Icon(Icons.more_vert_rounded,
+                            child: const Icon(LucideIcons.moreVertical,
                                 color: AppColors.textSecondary, size: 20),
                           ),
                       ],
@@ -227,7 +228,7 @@ class _TimelineTile extends ConsumerWidget {
                     const Gap(8),
                     Row(
                       children: [
-                        const Icon(Icons.person_outline_rounded,
+                        const Icon(LucideIcons.user,
                             size: 14, color: AppColors.textSecondary),
                         const Gap(6),
                         Text(
@@ -239,7 +240,7 @@ class _TimelineTile extends ConsumerWidget {
                         ),
                         if (rundown.lokasi != null && rundown.lokasi!.isNotEmpty) ...[
                           const Gap(16),
-                          const Icon(Icons.location_on_outlined,
+                            const Icon(LucideIcons.mapPin,
                               size: 14, color: AppColors.textSecondary),
                           const Gap(6),
                           Expanded(
@@ -301,7 +302,7 @@ class _TimelineTile extends ConsumerWidget {
             ),
             const Divider(),
             ListTile(
-              leading: const Icon(Icons.edit_outlined, color: AppColors.textPrimary),
+              leading: const Icon(LucideIcons.pencil, color: AppColors.textPrimary),
               title: const Text('Edit', style: TextStyle(color: AppColors.textPrimary)),
               onTap: () {
                 Navigator.pop(context);
@@ -311,7 +312,7 @@ class _TimelineTile extends ConsumerWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.delete_outline, color: AppColors.error),
+              leading: const Icon(LucideIcons.trash, color: AppColors.error),
               title: const Text('Hapus', style: TextStyle(color: AppColors.error)),
               onTap: () async {
                 Navigator.pop(context);

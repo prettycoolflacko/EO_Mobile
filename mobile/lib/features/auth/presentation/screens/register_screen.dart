@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gap/gap.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 import 'package:eventsync_mobile/core/theme/app_colors.dart';
 import 'package:eventsync_mobile/core/errors/app_exception.dart';
@@ -57,11 +58,28 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         context.pop();
       }
     } on ValidationException catch (e) {
-      setState(() => _errorMessage = e.errors?.first.message ?? e.message);
+      final message = e.errors?.first.message ?? e.message;
+      setState(() => _errorMessage = message);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(message)),
+        );
+      }
     } on AppException catch (e) {
       setState(() => _errorMessage = e.message);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.message)),
+        );
+      }
     } catch (_) {
-      setState(() => _errorMessage = 'Terjadi kesalahan. Coba lagi.');
+      const message = 'Terjadi kesalahan. Coba lagi.';
+      setState(() => _errorMessage = message);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text(message)),
+        );
+      }
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -74,7 +92,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded),
+          icon: const Icon(LucideIcons.arrowLeft),
           onPressed: () => context.pop(),
         ),
       ),
@@ -124,7 +142,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       textInputAction: TextInputAction.next,
                       decoration: const InputDecoration(
                         hintText: 'Nama Lengkap',
-                        prefixIcon: Icon(Icons.person_outlined),
+                        prefixIcon: Icon(LucideIcons.user),
                       ),
                       validator: (v) =>
                           v == null || v.trim().isEmpty ? 'Nama wajib diisi' : null,
@@ -136,7 +154,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       textInputAction: TextInputAction.next,
                       decoration: const InputDecoration(
                         hintText: 'Email',
-                        prefixIcon: Icon(Icons.email_outlined),
+                        prefixIcon: Icon(LucideIcons.mail),
                       ),
                       validator: (v) {
                         if (v == null || v.trim().isEmpty) return 'Email wajib diisi';
@@ -151,11 +169,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       textInputAction: TextInputAction.next,
                       decoration: InputDecoration(
                         hintText: 'Password',
-                        prefixIcon: const Icon(Icons.lock_outlined),
+                        prefixIcon: const Icon(LucideIcons.lock),
                         suffixIcon: IconButton(
                           icon: Icon(_obscurePassword
-                              ? Icons.visibility_off_outlined
-                              : Icons.visibility_outlined),
+                          ? LucideIcons.eyeOff
+                          : LucideIcons.eye),
                           onPressed: () =>
                               setState(() => _obscurePassword = !_obscurePassword),
                         ),
@@ -173,7 +191,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       textInputAction: TextInputAction.done,
                       decoration: const InputDecoration(
                         hintText: 'No. Telepon (opsional)',
-                        prefixIcon: Icon(Icons.phone_outlined),
+                        prefixIcon: Icon(LucideIcons.phone),
                       ),
                     ),
                     const Gap(28),

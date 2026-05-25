@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 import 'package:eventsync_mobile/core/theme/app_colors.dart';
 import 'package:eventsync_mobile/features/notifications/domain/entities/notification_model.dart';
@@ -36,7 +37,7 @@ class NotificationScreen extends ConsumerWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.notifications_off_outlined,
+                        Icon(LucideIcons.bellOff,
                             size: 64, color: AppColors.textSecondary),
                         Gap(16),
                         Text('Tidak ada notifikasi baru',
@@ -79,15 +80,15 @@ class _NotificationCard extends StatelessWidget {
     
     switch (notification.tipe) {
       case 'peringatan':
-        icon = Icons.warning_rounded;
+        icon = LucideIcons.alertTriangle;
         iconColor = AppColors.error;
         break;
       case 'tugas':
-        icon = Icons.assignment_rounded;
+        icon = LucideIcons.clipboardList;
         iconColor = AppColors.primary;
         break;
       default:
-        icon = Icons.info_rounded;
+        icon = LucideIcons.info;
         iconColor = AppColors.info;
         break;
     }

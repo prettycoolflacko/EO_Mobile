@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:gap/gap.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 import 'package:eventsync_mobile/core/theme/app_colors.dart';
 import 'package:eventsync_mobile/shared/widgets/status_badge.dart';
@@ -37,7 +38,7 @@ class _TaskDetailScreenState extends ConsumerState<TaskDetailScreen> {
 
               if (canEdit) {
                 return IconButton(
-                  icon: const Icon(Icons.edit_note_rounded),
+                  icon: const Icon(LucideIcons.pencil),
                   onPressed: () => _showUpdateStatusSheet(context, task),
                 );
               }
@@ -53,7 +54,7 @@ class _TaskDetailScreenState extends ConsumerState<TaskDetailScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline_rounded,
+                const Icon(LucideIcons.alertCircle,
                   color: AppColors.error, size: 48),
               const Gap(16),
               Text(err.toString(),
@@ -126,7 +127,7 @@ class _TaskDetailContent extends StatelessWidget {
             children: [
               Expanded(
                 child: _InfoCard(
-                  icon: Icons.event_note_rounded,
+                  icon: LucideIcons.calendar,
                   label: 'Event',
                   value: task.eventName ?? 'Event #${task.eventId}',
                 ),
@@ -134,7 +135,7 @@ class _TaskDetailContent extends StatelessWidget {
               const Gap(12),
               Expanded(
                 child: _InfoCard(
-                  icon: Icons.access_time_rounded,
+                  icon: LucideIcons.clock,
                   label: 'Tenggat Waktu',
                   value: task.deadline != null ? dateFormat.format(task.deadline!) : 'Tidak ada',
                   isAlert: task.deadline != null &&
@@ -149,7 +150,7 @@ class _TaskDetailContent extends StatelessWidget {
             children: [
               Expanded(
                 child: _InfoCard(
-                  icon: Icons.person_outline_rounded,
+                  icon: LucideIcons.user,
                   label: 'Penanggung Jawab',
                   value: task.assigneeName ?? 'Belum ada',
                 ),
@@ -157,7 +158,7 @@ class _TaskDetailContent extends StatelessWidget {
               const Gap(12),
               Expanded(
                 child: _InfoCard(
-                  icon: Icons.groups_outlined,
+                  icon: LucideIcons.users,
                   label: 'Divisi',
                   value: task.divisi ?? '-',
                 ),
@@ -192,7 +193,7 @@ class _TaskDetailContent extends StatelessWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.info_outline_rounded,
+                    const Icon(LucideIcons.info,
                       color: AppColors.warning, size: 20),
                   const Gap(12),
                   Expanded(
@@ -243,7 +244,7 @@ class _TaskDetailContent extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.attachment_rounded,
+                    const Icon(LucideIcons.paperclip,
                         color: AppColors.primary),
                     const Gap(12),
                     Expanded(
@@ -256,7 +257,7 @@ class _TaskDetailContent extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    const Icon(Icons.open_in_new_rounded,
+                    const Icon(LucideIcons.externalLink,
                         color: AppColors.textSecondary, size: 18),
                   ],
                 ),
