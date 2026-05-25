@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import 'package:eventsync_mobile/core/theme/app_colors.dart';
@@ -17,7 +18,8 @@ class RundownScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final rundownAsync = ref.watch(rundownListProvider(eventId));
-    final isAdmin = ref.watch(currentUserProvider)?.isAdmin ?? false;
+    final user = ref.watch(currentUserProvider);
+    final isAdminOrKetua = user?.role == 'admin' || user?.role == 'ketua';
 
     return Scaffold(
       backgroundColor: AppColors.backgroundDark,
@@ -73,7 +75,7 @@ class RundownScreen extends ConsumerWidget {
               return _TimelineTile(
                 rundown: rundown,
                 isLast: isLast,
-                isAdmin: isAdmin,
+                isAdmin: isAdminOrKetua,
                 onStatusUpdate: () =>
                     ref.invalidate(rundownListProvider(eventId)),
               );
@@ -296,6 +298,60 @@ class _TimelineTile extends ConsumerWidget {
               label: 'Ditunda',
               color: AppColors.rundownDitunda,
               onTap: () => _update(context, ref, 'ditunda'),
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.edit_outlined, color: AppColors.textPrimary),
+              title: const Text('Edit', style: TextStyle(color: AppColors.textPrimary)),
+              onTap: () {
+                Navigator.pop(context);
+                context.pushNamed('newRundown', pathParameters: {'eventId': rundown.eventId.toString()}, extra: rundown).then((_) {
+                  onStatusUpdate();
+                });
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.delete_outline, color: AppColors.error),
+              title: const Text('Hapus', style: TextStyle(color: AppColors.error)),
+              onTap: () async {
+                Navigator.pop(context);
+                final confirm = await showDialog<bool>(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    backgroundColor: AppColors.cardDark,
+                    title: const Text('Hapus Rundown'),
+                    content: const Text('Apakah Anda yakin ingin menghapus rundown ini?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx, false),
+                        child: const Text('Batal', style: TextStyle(color: AppColors.textSecondary)),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx, true),
+                        child: const Text('Hapus', style: TextStyle(color: AppColors.error)),
+                      ),
+                    ],
+                  ),
+                );
+                
+                if (confirm == true && context.mounted) {
+                  try {
+                    await ref.read(rundownRepositoryProvider).deleteRundown(rundown.id);
+                    onStatusUpdate();
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Rundown berhasil dihapus')),
+                      );
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Gagal menghapus rundown')),
+                      );
+                    }
+                  }
+                }
+              },
             ),
           ],
         ),

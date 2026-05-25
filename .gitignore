@@ -45,3 +45,4 @@ Thumbs.db
 # Database data
 mongodb_data/
 
+_env

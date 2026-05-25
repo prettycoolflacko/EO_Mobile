@@ -51,10 +51,44 @@ class RundownRepositoryImpl implements RundownRepository {
       final response = await _dio.post(
         ApiEndpoints.eventRundowns(eventId),
         data: {
-          'kegiatan': kegiatan,
+          'judul_sesi': kegiatan,
           'waktu_mulai': waktuMulai.toIso8601String(),
           'waktu_selesai': waktuSelesai.toIso8601String(),
-          if (pic != null && pic.isNotEmpty) 'pic': pic,
+          'urutan': 1,
+          if (pic != null && pic.isNotEmpty) 'deskripsi': 'PIC: $pic',
+        },
+      );
+      return Rundown.fromJson(response.data['data']['rundown'] as Map<String, dynamic>);
+    } on DioException catch (e) {
+      throw handleDioError(e);
+    }
+  }
+
+  @override
+  Future<void> deleteRundown(int id) async {
+    try {
+      await _dio.delete(ApiEndpoints.rundown(id));
+    } on DioException catch (e) {
+      throw handleDioError(e);
+    }
+  }
+
+  @override
+  Future<Rundown> updateRundown({
+    required int id,
+    required String kegiatan,
+    required DateTime waktuMulai,
+    required DateTime waktuSelesai,
+    String? pic,
+  }) async {
+    try {
+      final response = await _dio.put(
+        ApiEndpoints.rundown(id),
+        data: {
+          'judul_sesi': kegiatan,
+          'waktu_mulai': waktuMulai.toIso8601String(),
+          'waktu_selesai': waktuSelesai.toIso8601String(),
+          if (pic != null && pic.isNotEmpty) 'deskripsi': 'PIC: $pic',
         },
       );
       return Rundown.fromJson(response.data['data']['rundown'] as Map<String, dynamic>);

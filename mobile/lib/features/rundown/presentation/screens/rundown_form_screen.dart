@@ -2,14 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gap/gap.dart';
-import 'package:intl/intl.dart';
 
 import 'package:eventsync_mobile/core/theme/app_colors.dart';
 import 'package:eventsync_mobile/features/rundown/presentation/providers/rundown_provider.dart';
 
+import 'package:eventsync_mobile/features/rundown/domain/entities/rundown.dart';
+
 class RundownFormScreen extends ConsumerStatefulWidget {
   final int eventId;
-  const RundownFormScreen({super.key, required this.eventId});
+  final Rundown? rundown;
+  
+  const RundownFormScreen({super.key, required this.eventId, this.rundown});
 
   @override
   ConsumerState<RundownFormScreen> createState() => _RundownFormScreenState();
@@ -25,6 +28,19 @@ class _RundownFormScreenState extends ConsumerState<RundownFormScreen> {
   
   bool _isLoading = false;
   String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.rundown != null) {
+      _kegiatanController.text = widget.rundown!.namaKegiatan;
+      _picController.text = widget.rundown!.picName == 'Tidak ada PIC' ? '' : widget.rundown!.picName;
+      _waktuMulai = TimeOfDay.fromDateTime(widget.rundown!.waktuMulai);
+      if (widget.rundown!.waktuSelesai != null) {
+        _waktuSelesai = TimeOfDay.fromDateTime(widget.rundown!.waktuSelesai!);
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -81,26 +97,33 @@ class _RundownFormScreenState extends ConsumerState<RundownFormScreen> {
     try {
       final repository = ref.read(rundownRepositoryProvider);
       
-      // Convert TimeOfDay to dummy DateTime for API (API only needs time part or full ISO depending on backend,
-      // but usually for rundown it's full datetime. Let's assume today's date + selected time)
       final now = DateTime.now();
       final mulaiDT = DateTime(now.year, now.month, now.day, _waktuMulai!.hour, _waktuMulai!.minute);
       final selesaiDT = DateTime(now.year, now.month, now.day, _waktuSelesai!.hour, _waktuSelesai!.minute);
 
-      await repository.createRundown(
-        eventId: widget.eventId,
-        kegiatan: _kegiatanController.text.trim(),
-        waktuMulai: mulaiDT,
-        waktuSelesai: selesaiDT,
-        pic: _picController.text.trim(),
-      );
+      if (widget.rundown == null) {
+        await repository.createRundown(
+          eventId: widget.eventId,
+          kegiatan: _kegiatanController.text.trim(),
+          waktuMulai: mulaiDT,
+          waktuSelesai: selesaiDT,
+          pic: _picController.text.trim(),
+        );
+      } else {
+        await repository.updateRundown(
+          id: widget.rundown!.id,
+          kegiatan: _kegiatanController.text.trim(),
+          waktuMulai: mulaiDT,
+          waktuSelesai: selesaiDT,
+          pic: _picController.text.trim(),
+        );
+      }
       
-      // Refresh the list
       ref.invalidate(rundownListProvider(widget.eventId));
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Rundown berhasil ditambahkan')),
+          SnackBar(content: Text(widget.rundown == null ? 'Rundown berhasil ditambahkan' : 'Rundown berhasil diupdate')),
         );
         context.pop();
       }
@@ -116,7 +139,7 @@ class _RundownFormScreenState extends ConsumerState<RundownFormScreen> {
     return Scaffold(
       backgroundColor: AppColors.backgroundDark,
       appBar: AppBar(
-        title: const Text('Tambah Rundown Baru'),
+        title: Text(widget.rundown == null ? 'Tambah Rundown Baru' : 'Edit Rundown'),
         backgroundColor: Colors.transparent,
       ),
       body: SafeArea(
@@ -253,7 +276,7 @@ class _RundownFormScreenState extends ConsumerState<RundownFormScreen> {
                             height: 22,
                             child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white),
                           )
-                        : const Text('Tambah Rundown'),
+                        : Text(widget.rundown == null ? 'Tambah Rundown' : 'Simpan Perubahan'),
                   ),
                 ),
                 const Gap(24),

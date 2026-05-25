@@ -11,4 +11,13 @@ abstract class VendorRepository {
     required String layanan,
     String? kontak,
   });
+
+  Future<void> deleteVendor(int id);
+
+  Future<Vendor> updateVendor({
+    required int id,
+    required String namaVendor,
+    required String layanan,
+    String? kontak,
+  });
 }

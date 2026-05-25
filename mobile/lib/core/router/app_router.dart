@@ -12,6 +12,7 @@ import 'package:eventsync_mobile/features/events/presentation/screens/event_deta
 import 'package:eventsync_mobile/features/tasks/presentation/screens/task_list_screen.dart';
 import 'package:eventsync_mobile/features/tasks/presentation/screens/task_detail_screen.dart';
 import 'package:eventsync_mobile/features/tasks/presentation/screens/task_form_screen.dart';
+import 'package:eventsync_mobile/features/rundown/domain/entities/rundown.dart';
 import 'package:eventsync_mobile/features/rundown/presentation/screens/rundown_screen.dart';
 import 'package:eventsync_mobile/features/rundown/presentation/screens/rundown_form_screen.dart';
 import 'package:eventsync_mobile/features/chat/presentation/screens/chat_screen.dart';
@@ -151,7 +152,8 @@ final routerProvider = Provider<GoRouter>((ref) {
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) {
           final eventId = int.parse(state.pathParameters['eventId']!);
-          return RundownFormScreen(eventId: eventId);
+          final rundown = state.extra as Rundown?;
+          return RundownFormScreen(eventId: eventId, rundown: rundown);
         },
       ),
       GoRoute(

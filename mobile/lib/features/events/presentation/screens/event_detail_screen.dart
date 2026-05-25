@@ -68,55 +68,89 @@ class _EventDetailContent extends StatelessWidget {
                     final user = ref.watch(currentUserProvider);
                     final isAdmin = user?.role == 'admin';
                     final isKetuaOfThisEvent = user?.role == 'ketua' && event.ketuaId == user?.id;
-                    // Backend explicitly restricts event deletion to 'admin' only in routes/v1/eventRoutes.js
                     final canDelete = isAdmin;
-                    final canCancel = isKetuaOfThisEvent && event.status != 'batal';
+                    final canChangeStatus = isKetuaOfThisEvent || isAdmin;
 
                     return Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        if (canCancel)
+                        if (canChangeStatus)
                           IconButton(
                             onPressed: () async {
+                              String selectedStatus = event.status;
                               final confirm = await showDialog<bool>(
                                 context: context,
-                                builder: (ctx) => AlertDialog(
-                                  backgroundColor: AppColors.cardDark,
-                                  title: const Text('Batalkan Event'),
-                                  content: Text('Batalkan event ${event.namaEvent}? Event tidak dihapus dari sistem, tapi statusnya berubah menjadi Batal.'),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () => Navigator.pop(ctx, false),
-                                      child: const Text('Tidak', style: TextStyle(color: AppColors.textSecondary)),
+                                builder: (ctx) => StatefulBuilder(
+                                  builder: (context, setState) => AlertDialog(
+                                    backgroundColor: AppColors.cardDark,
+                                    title: const Text('Ubah Status Event'),
+                                    content: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        RadioListTile<String>(
+                                          title: const Text('Draft', style: TextStyle(color: AppColors.textPrimary)),
+                                          value: 'draft',
+                                          groupValue: selectedStatus,
+                                          onChanged: (v) => setState(() => selectedStatus = v!),
+                                          activeColor: AppColors.primary,
+                                        ),
+                                        RadioListTile<String>(
+                                          title: const Text('Aktif', style: TextStyle(color: AppColors.textPrimary)),
+                                          value: 'aktif',
+                                          groupValue: selectedStatus,
+                                          onChanged: (v) => setState(() => selectedStatus = v!),
+                                          activeColor: AppColors.primary,
+                                        ),
+                                        RadioListTile<String>(
+                                          title: const Text('Selesai', style: TextStyle(color: AppColors.textPrimary)),
+                                          value: 'selesai',
+                                          groupValue: selectedStatus,
+                                          onChanged: (v) => setState(() => selectedStatus = v!),
+                                          activeColor: AppColors.primary,
+                                        ),
+                                        RadioListTile<String>(
+                                          title: const Text('Batal', style: TextStyle(color: AppColors.error)),
+                                          value: 'batal',
+                                          groupValue: selectedStatus,
+                                          onChanged: (v) => setState(() => selectedStatus = v!),
+                                          activeColor: AppColors.error,
+                                        ),
+                                      ],
                                     ),
-                                    TextButton(
-                                      onPressed: () => Navigator.pop(ctx, true),
-                                      child: const Text('Batalkan', style: TextStyle(color: AppColors.error)),
-                                    ),
-                                  ],
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(ctx, false),
+                                        child: const Text('Tutup', style: TextStyle(color: AppColors.textSecondary)),
+                                      ),
+                                      TextButton(
+                                        onPressed: selectedStatus == event.status ? null : () => Navigator.pop(ctx, true),
+                                        child: const Text('Simpan', style: TextStyle(color: AppColors.primary)),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               );
 
                               if (confirm == true && context.mounted) {
                                 try {
-                                  await ref.read(eventListNotifierProvider.notifier).updateEventStatus(event.id, 'batal');
+                                  await ref.read(eventListNotifierProvider.notifier).updateEventStatus(event.id, selectedStatus);
                                   ref.invalidate(eventDetailProvider(event.id));
                                   if (context.mounted) {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text('Event berhasil dibatalkan')),
+                                      SnackBar(content: Text('Status event berhasil diubah menjadi $selectedStatus')),
                                     );
                                   }
                                 } catch (e) {
                                   if (context.mounted) {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text('Gagal membatalkan event')),
+                                      const SnackBar(content: Text('Gagal mengubah status event')),
                                     );
                                   }
                                 }
                               }
                             },
-                            icon: const Icon(Icons.cancel_outlined, color: AppColors.error),
-                            tooltip: 'Batalkan Event',
+                            icon: const Icon(Icons.edit_calendar_outlined, color: AppColors.textPrimary),
+                            tooltip: 'Ubah Status Event',
                           ),
                         if (canDelete)
                           IconButton(
@@ -247,6 +281,7 @@ class _EventDetailContent extends StatelessWidget {
           builder: (context, ref, _) {
             final user = ref.watch(currentUserProvider);
             final isAdminOrKetua = user?.role == 'admin' || user?.role == 'ketua';
+            final canAddItems = isAdminOrKetua && event.status != 'batal' && event.status != 'selesai';
 
             return TabBarView(
               children: [
@@ -255,24 +290,24 @@ class _EventDetailContent extends StatelessWidget {
                   title: 'Rundown Acara',
                   actionLabel: 'Lihat Rundown',
                   onAction: () => context.push('/rundown/${event.id}'),
-                  secondaryActionLabel: isAdminOrKetua ? '+ Buat Rundown' : null,
-                  onSecondaryAction: isAdminOrKetua ? () => context.push('/rundown/${event.id}/new') : null,
+                  secondaryActionLabel: canAddItems ? '+ Buat Rundown' : null,
+                  onSecondaryAction: canAddItems ? () => context.push('/rundown/${event.id}/new') : null,
                 ),
                 _TabPlaceholder(
                   icon: Icons.checklist_rounded,
                   title: 'Tugas Kepanitiaan',
                   actionLabel: 'Lihat Semua Tugas',
                   onAction: () => context.push('/events/${event.id}/tasks'),
-                  secondaryActionLabel: isAdminOrKetua ? '+ Tambah Tugas via Email' : null,
-                  onSecondaryAction: isAdminOrKetua ? () => context.push('/events/${event.id}/tasks/new') : null,
+                  secondaryActionLabel: canAddItems ? '+ Tambah Tugas via Email' : null,
+                  onSecondaryAction: canAddItems ? () => context.push('/events/${event.id}/tasks/new') : null,
                 ),
                 _TabPlaceholder(
                   icon: Icons.store_rounded,
                   title: 'Vendor Terlibat',
                   actionLabel: 'Lihat Vendor',
                   onAction: () => context.push('/vendors/${event.id}'),
-                  secondaryActionLabel: isAdminOrKetua ? '+ Tambah Vendor' : null,
-                  onSecondaryAction: isAdminOrKetua ? () => context.push('/vendors/${event.id}/new') : null,
+                  secondaryActionLabel: canAddItems ? '+ Tambah Vendor' : null,
+                  onSecondaryAction: canAddItems ? () => context.push('/vendors/${event.id}/new') : null,
                 ),
               ],
             );

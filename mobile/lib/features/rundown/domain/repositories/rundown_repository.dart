@@ -12,4 +12,14 @@ abstract class RundownRepository {
     required DateTime waktuSelesai,
     String? pic,
   });
+
+  Future<void> deleteRundown(int id);
+
+  Future<Rundown> updateRundown({
+    required int id,
+    required String kegiatan,
+    required DateTime waktuMulai,
+    required DateTime waktuSelesai,
+    String? pic,
+  });
 }

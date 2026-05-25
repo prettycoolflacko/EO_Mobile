@@ -87,11 +87,17 @@ class Rundown {
       parsedVendorId = json['vendor_id'] as int?;
     }
 
+    String? parsedDeskripsi = json['deskripsi'] as String?;
+    if (parsedPicName == 'Tidak ada PIC' && parsedDeskripsi != null && parsedDeskripsi.startsWith('PIC: ')) {
+      parsedPicName = parsedDeskripsi.substring(5);
+      parsedDeskripsi = null; // Clear it so it doesn't show as description
+    }
+
     return Rundown(
       id: json['id'] as int,
       eventId: json['event_id'] as int,
       judulSesi: json['judul_sesi'] as String? ?? json['nama_kegiatan'] as String? ?? '',
-      deskripsi: json['deskripsi'] as String?,
+      deskripsi: parsedDeskripsi,
       waktuMulai: _parseTime(startVal),
       waktuSelesai: endVal != null ? _parseTime(endVal) : null,
       picId: parsedPicId,

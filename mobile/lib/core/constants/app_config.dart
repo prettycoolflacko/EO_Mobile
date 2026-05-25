@@ -18,11 +18,11 @@ class AppConfig {
     switch (_env) {
       case Environment.dev:
         // Android emulator maps localhost to 10.0.2.2
-        return 'http://10.0.2.2:8080/api/v1';
+        return 'https://eventsync-backend-254683579194.asia-southeast2.run.app/api/v1';
       case Environment.staging:
-        return 'http://10.0.2.2:8080/api/v1';
+        return 'https://eventsync-backend-254683579194.asia-southeast2.run.app/api/v1';
       case Environment.production:
-        return 'https://api.eventsync.app/api/v1';
+        return 'https://eventsync-backend-254683579194.asia-southeast2.run.app/api/v1';
     }
   }
 
