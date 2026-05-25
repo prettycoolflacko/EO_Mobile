@@ -168,6 +168,17 @@ class EventListNotifier extends StateNotifier<EventListState> {
       rethrow;
     }
   }
+
+  Future<void> updateEventStatus(int id, String status) async {
+    try {
+      final updatedEvent = await _repository.updateEventStatus(id, status);
+      state = state.copyWith(
+        events: state.events.map((e) => e.id == id ? updatedEvent : e).toList(),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
 
 /// Provider for a single event detail.

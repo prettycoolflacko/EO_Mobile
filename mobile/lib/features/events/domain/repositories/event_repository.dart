@@ -21,4 +21,5 @@ abstract class EventRepository {
   });
 
   Future<void> deleteEvent(int id);
+  Future<Event> updateEventStatus(int id, String status);
 }

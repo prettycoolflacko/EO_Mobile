@@ -19,10 +19,61 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
   final _scrollController = ScrollController();
   final _searchController = TextEditingController();
 
+  Set<int> _allowedStaffIds = {};
+  bool _isLoadingAllowedStaff = false;
+
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadAllowedStaffIds();
+    });
+  }
+
+  Future<void> _loadAllowedStaffIds() async {
+    final currentUser = ref.read(currentUserProvider);
+    if (currentUser?.role != 'ketua') return;
+
+    setState(() => _isLoadingAllowedStaff = true);
+    try {
+      final dio = ref.read(dioProvider);
+      
+      final eventsRes = await dio.get('/api/v1/events', queryParameters: {
+        'ketua_id': currentUser!.id,
+        'per_page': 100, // max 100 allowed by backend validation
+      });
+      final events = eventsRes.data['data']['events'] as List;
+      final myEventIds = events.map((e) => e['id'] as int).toSet();
+
+      final staffIds = <int>{};
+      for (final eventId in myEventIds) {
+        try {
+          final tasksRes = await dio.get('/api/v1/events/$eventId/tugas', queryParameters: {'per_page': 100}); // max 100 allowed by backend validation
+          final tasks = tasksRes.data['data']['tugas'] as List;
+          for (final t in tasks) {
+            if (t['assignee_id'] != null) {
+              final val = t['assignee_id'];
+              staffIds.add(val is int ? val : int.parse(val.toString()));
+            }
+          }
+        } catch (e) {
+          debugPrint('Failed to load tasks for event $eventId: $e');
+        }
+      }
+
+      if (mounted) {
+        setState(() {
+          _allowedStaffIds = staffIds;
+        });
+      }
+    } catch (e) {
+      debugPrint('Failed to load allowed staff: $e');
+    } finally {
+      if (mounted) {
+        setState(() => _isLoadingAllowedStaff = false);
+      }
+    }
   }
 
   @override
@@ -43,61 +94,12 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
     ref.read(userListNotifierProvider.notifier).fetchFirstPage(search: value);
   }
 
-  Future<bool> _isStaffInKetuaProject(User targetUser) async {
-    try {
-      final dio = ref.read(dioProvider);
-      final currentUser = ref.read(currentUserProvider);
-      if (currentUser == null) return false;
-
-      // 1. Dapatkan semua tugas yang di-assign ke staff
-      final tasksResponse = await dio.get('/api/v1/tugas', queryParameters: {
-        'assignee_id': targetUser.id,
-        'per_page': 100, 
-      });
-      
-      final tasks = tasksResponse.data['data']['tugas'] as List;
-      if (tasks.isEmpty) return false;
-      
-      final eventIds = tasks.map((t) => t['event_id'] as int).toSet();
-      
-      // 2. Cek setiap event apakah dimiliki oleh ketua yang sedang login
-      for (final eventId in eventIds) {
-        try {
-          final eventResponse = await dio.get('/api/v1/events/$eventId');
-          final eventData = eventResponse.data['data']['event'];
-          if (eventData['ketua_id'] == currentUser.id) {
-            return true;
-          }
-        } catch (_) {
-          // ignore error jika event tidak ditemukan / dilarang aksesnya
-        }
-      }
-      
-      return false;
-    } catch (e) {
-      debugPrint('Error checking staff project: $e');
-      return false;
-    }
-  }
-
   Future<void> _changeDivisi(User user) async {
     final currentUser = ref.read(currentUserProvider);
     
     // Validasi untuk ketua: hanya bisa ubah divisi jika staff ada di projectnya
     if (currentUser?.role == 'ketua') {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (ctx) => const Center(child: CircularProgressIndicator()),
-      );
-      
-      final isAuthorized = await _isStaffInKetuaProject(user);
-      
-      if (mounted) {
-        Navigator.pop(context); // tutup loading
-      }
-      
-      if (!isAuthorized) {
+      if (!_allowedStaffIds.contains(user.id)) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Anda hanya bisa mengubah divisi staff yang tergabung dalam event Anda.')),
@@ -251,11 +253,23 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(userListNotifierProvider);
+    final currentUser = ref.watch(currentUserProvider);
+    
+    final displayedUsers = currentUser?.role == 'ketua'
+        ? state.users.where((u) => _allowedStaffIds.contains(u.id)).toList()
+        : state.users;
+        
+    // Cek jika filter mengosongkan list tapi masih ada data di next page, auto-fetch
+    if (currentUser?.role == 'ketua' && !_isLoadingAllowedStaff && displayedUsers.isEmpty && state.hasNextPage && !state.isLoading) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(userListNotifierProvider.notifier).fetchNextPage();
+      });
+    }
 
     return Scaffold(
       backgroundColor: AppColors.backgroundDark,
       appBar: AppBar(
-        title: Text(ref.read(currentUserProvider)?.role == 'admin' ? 'Kelola User' : 'Kelola Staff & Divisi'),
+        title: Text(currentUser?.role == 'admin' ? 'Kelola User' : 'Kelola Staff & Divisi'),
         backgroundColor: Colors.transparent,
       ),
       body: Column(
@@ -287,9 +301,9 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
               ),
             ),
           Expanded(
-            child: state.isLoading && state.users.isEmpty
+            child: (state.isLoading && state.users.isEmpty) || _isLoadingAllowedStaff
                 ? const Center(child: CircularProgressIndicator())
-                : state.users.isEmpty
+                : displayedUsers.isEmpty
                     ? const Center(
                         child: Text(
                           'Tidak ada user ditemukan',
@@ -299,10 +313,10 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
                     : ListView.separated(
                         controller: _scrollController,
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        itemCount: state.users.length + (state.hasNextPage ? 1 : 0),
+                        itemCount: displayedUsers.length + (state.hasNextPage ? 1 : 0),
                         separatorBuilder: (_, __) => const Gap(12),
                         itemBuilder: (context, index) {
-                          if (index == state.users.length) {
+                          if (index == displayedUsers.length) {
                             return const Center(
                               child: Padding(
                                 padding: EdgeInsets.all(16),
@@ -311,7 +325,7 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
                             );
                           }
 
-                          final user = state.users[index];
+                          final user = displayedUsers[index];
                           return Container(
                             decoration: BoxDecoration(
                               color: AppColors.surface,

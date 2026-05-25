@@ -84,4 +84,17 @@ class EventRepositoryImpl implements EventRepository {
       throw handleDioError(e);
     }
   }
+
+  @override
+  Future<Event> updateEventStatus(int id, String status) async {
+    try {
+      final response = await _dio.put(
+        ApiEndpoints.event(id),
+        data: {'status': status},
+      );
+      return Event.fromJson(response.data['data']['event'] as Map<String, dynamic>);
+    } on DioException catch (e) {
+      throw handleDioError(e);
+    }
+  }
 }

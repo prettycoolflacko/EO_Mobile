@@ -68,53 +68,101 @@ class _EventDetailContent extends StatelessWidget {
                     final user = ref.watch(currentUserProvider);
                     final isAdmin = user?.role == 'admin';
                     final isKetuaOfThisEvent = user?.role == 'ketua' && event.ketuaId == user?.id;
-                    final canDelete = isAdmin || isKetuaOfThisEvent;
+                    // Backend explicitly restricts event deletion to 'admin' only in routes/v1/eventRoutes.js
+                    final canDelete = isAdmin;
+                    final canCancel = isKetuaOfThisEvent && event.status != 'batal';
 
-                    if (canDelete) {
-                      return IconButton(
-                        onPressed: () async {
-                          final confirm = await showDialog<bool>(
-                            context: context,
-                            builder: (ctx) => AlertDialog(
-                              backgroundColor: AppColors.cardDark,
-                              title: const Text('Hapus Event'),
-                              content: Text('Hapus event ${event.namaEvent}?'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(ctx, false),
-                                  child: const Text('Batal', style: TextStyle(color: AppColors.textSecondary)),
+                    return Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (canCancel)
+                          IconButton(
+                            onPressed: () async {
+                              final confirm = await showDialog<bool>(
+                                context: context,
+                                builder: (ctx) => AlertDialog(
+                                  backgroundColor: AppColors.cardDark,
+                                  title: const Text('Batalkan Event'),
+                                  content: Text('Batalkan event ${event.namaEvent}? Event tidak dihapus dari sistem, tapi statusnya berubah menjadi Batal.'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(ctx, false),
+                                      child: const Text('Tidak', style: TextStyle(color: AppColors.textSecondary)),
+                                    ),
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(ctx, true),
+                                      child: const Text('Batalkan', style: TextStyle(color: AppColors.error)),
+                                    ),
+                                  ],
                                 ),
-                                TextButton(
-                                  onPressed: () => Navigator.pop(ctx, true),
-                                  child: const Text('Hapus', style: TextStyle(color: AppColors.error)),
-                                ),
-                              ],
-                            ),
-                          );
+                              );
 
-                          if (confirm == true && context.mounted) {
-                            try {
-                              await ref.read(eventListNotifierProvider.notifier).deleteEvent(event.id);
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Event berhasil dihapus')),
-                                );
-                                context.pop(); // go back to dashboard
+                              if (confirm == true && context.mounted) {
+                                try {
+                                  await ref.read(eventListNotifierProvider.notifier).updateEventStatus(event.id, 'batal');
+                                  ref.invalidate(eventDetailProvider(event.id));
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(content: Text('Event berhasil dibatalkan')),
+                                    );
+                                  }
+                                } catch (e) {
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(content: Text('Gagal membatalkan event')),
+                                    );
+                                  }
+                                }
                               }
-                            } catch (e) {
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Gagal menghapus event')),
-                                );
+                            },
+                            icon: const Icon(Icons.cancel_outlined, color: AppColors.error),
+                            tooltip: 'Batalkan Event',
+                          ),
+                        if (canDelete)
+                          IconButton(
+                            onPressed: () async {
+                              final confirm = await showDialog<bool>(
+                                context: context,
+                                builder: (ctx) => AlertDialog(
+                                  backgroundColor: AppColors.cardDark,
+                                  title: const Text('Hapus Event'),
+                                  content: Text('Hapus event ${event.namaEvent}?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(ctx, false),
+                                      child: const Text('Batal', style: TextStyle(color: AppColors.textSecondary)),
+                                    ),
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(ctx, true),
+                                      child: const Text('Hapus', style: TextStyle(color: AppColors.error)),
+                                    ),
+                                  ],
+                                ),
+                              );
+
+                              if (confirm == true && context.mounted) {
+                                try {
+                                  await ref.read(eventListNotifierProvider.notifier).deleteEvent(event.id);
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(content: Text('Event berhasil dihapus')),
+                                    );
+                                    context.pop(); // go back to dashboard
+                                  }
+                                } catch (e) {
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(content: Text('Gagal menghapus event')),
+                                    );
+                                  }
+                                }
                               }
-                            }
-                          }
-                        },
-                        icon: const Icon(Icons.delete_outline, color: AppColors.error),
-                        tooltip: 'Hapus Event',
-                      );
-                    }
-                    return const SizedBox.shrink();
+                            },
+                            icon: const Icon(Icons.delete_outline, color: AppColors.error),
+                            tooltip: 'Hapus Event',
+                          ),
+                      ],
+                    );
                   },
                 ),
                 IconButton(
